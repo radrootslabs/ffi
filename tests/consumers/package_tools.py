@@ -153,7 +153,7 @@ def package_go(sdk, destination, prefix):
     write_zip(distribution_files(sdk), destination, prefix)
 
 
-def write_go_proxy(files, root, release):
+def write_go_proxy(files, root, release, module_time="2026-01-01T00:00:00Z"):
     proxy = root / "github.com/radrootslabs/ffi/bindings/go/@v"
     proxy.mkdir(parents=True, exist_ok=True)
     write_zip(
@@ -163,7 +163,7 @@ def write_go_proxy(files, root, release):
     )
     shutil.copyfile(files["go.mod"], proxy / f"v{release}.mod")
     (proxy / f"v{release}.info").write_text(
-        json.dumps({"Version": f"v{release}", "Time": "2026-01-01T00:00:00Z"}) + "\n"
+        json.dumps({"Version": f"v{release}", "Time": module_time}) + "\n"
     )
     (proxy / "list").write_text(f"v{release}\n")
 
@@ -186,7 +186,9 @@ def build_go_distribution(sdk=SDK):
     release = version(sdk)
     destination = sdk / "build/dist/go"
     write_zip(
-        files, destination / f"radroots-go-{release}.zip", f"radroots-go-{release}"
+        files,
+        destination / f"radroots-go-{release}.zip",
+        f"github.com/radrootslabs/ffi/bindings/go@v{release}",
     )
     write_go_proxy(files, destination / "proxy", release)
     print(f"Prepared Go ZIP and file proxy: {destination}")
@@ -206,7 +208,10 @@ def test_go_consumer(sdk=SDK, artifacts=None):
         shutil.copytree(sdk / "bindings/go/testdata", consumer / "testdata")
         extract_zip(packages / f"radroots-go-{version(sdk)}.zip", root / "unpacked")
         files = distribution_files(
-            sdk, root / "unpacked" / f"radroots-go-{version(sdk)}"
+            sdk,
+            root
+            / "unpacked"
+            / f"github.com/radrootslabs/ffi/bindings/go@v{version(sdk)}",
         )
         write_go_proxy(files, root / "proxy", version(sdk))
         env = {

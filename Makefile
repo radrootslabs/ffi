@@ -227,3 +227,7 @@ test-packaged-typescript:
 .PHONY: test-packaged-kotlin test-packaged-android package-maven-bundle
 test-packaged-kotlin test-packaged-android package-maven-bundle:
 	@bash tools/radroots_ffi/make.sh $@
+
+.PHONY: test-packaged-go
+test-packaged-go:
+	@bash tools/radroots_ffi/make.sh $@

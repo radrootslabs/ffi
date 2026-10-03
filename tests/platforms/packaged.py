@@ -120,6 +120,21 @@ def check(language, artifacts):
             from jvm_packaged import check as jvm_consumer
 
             jvm_consumer(language, artifacts)
+        elif language == "go":
+            from jvm_packaged import run_suite
+            from test_go_platforms import GoPlatforms
+            from test_linux_packages import packages
+
+            version = packages.version(ROOT)
+            archive = artifacts / f"go/radroots-go-{version}.zip"
+            with tempfile.TemporaryDirectory(
+                prefix="radroots-go-packaged-"
+            ) as temporary:
+                root = Path(temporary)
+                packages.extract_zip(archive, root)
+                module = root / f"github.com/radrootslabs/ffi/bindings/go@v{version}"
+                packages.distribution_files(ROOT, module)
+                run_suite(GoPlatforms, module=module, module_zip=archive)
         else:
             raise ValueError("Unsupported packaged language")
     finally:
@@ -136,7 +151,7 @@ def check(language, artifacts):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "language", choices=("python", "typescript", "kotlin", "android")
+        "language", choices=("python", "typescript", "kotlin", "android", "go")
     )
     parser.add_argument("--artifacts", type=Path, required=True)
     arguments = parser.parse_args()

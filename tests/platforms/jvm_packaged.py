@@ -33,7 +33,7 @@ def run_suite(kind, **attributes):
             setattr(test, name, value)
     result = unittest.TextTestRunner(verbosity=2).run(suite)
     if not result.wasSuccessful() or result.skipped or not result.testsRun:
-        raise ValueError("Installed JVM/Android suite must pass without skips")
+        raise ValueError("Installed consumer suite must pass without skips")
 
 
 def check(language, artifacts):

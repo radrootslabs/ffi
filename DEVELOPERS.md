@@ -464,6 +464,18 @@ before ZIP creation. A future canonical-core integration would use an immutable
 Git revision instead of the example hash. Consumers resolve the prepared module
 using a local file-backed proxy.
 
+`make package-go` now emits the canonical module ZIP layout rooted at
+`github.com/radrootslabs/ffi/bindings/go@v0.0.0`. `make test-packaged-go` installs
+the prepared ZIP into fresh module caches and executes four platform consumers,
+with the native host race suite and missing-archive/disabled-CGO negatives.
+Receipts retain exact ZIP SHA-256, module `h1` and `go.mod` `h1` checksums.
+Local file proxies disable sumdb only for unpublished fixtures; production
+acceptance must use normal remote checksum verification. The distribution commit
+validator permits only four `.a` files and their four `.a.json` provenance files,
+all regular mode 100644, with exact prepared bytes and source as sole parent.
+Final distribution commit creation and nested module tag publication belong to
+the separately governed release controller.
+
 `tests/platforms/targets.json` owns intended targets, native deployment floors,
 and effective per-language floors. `make update-support` regenerates the
 [target summary](#intended-targets) in this document without private files;
