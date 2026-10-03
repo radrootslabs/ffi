@@ -36,6 +36,8 @@
   ],
   "package_files": [
     "go.mod",
+    "api_test.go",
+    "testdata/print-name/main.go",
     "radroots.go",
     "README.md",
     "LICENSE-MIT",

@@ -26,6 +26,7 @@ package_go() {
     doctor_go
     build_go_all
     package_tool go-pack
+    uv run --python 3.14.7 --no-project python tests/consumers/go_vcs_zip.py
 }
 test_go_consumer() {
     package_go

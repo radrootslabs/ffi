@@ -5,6 +5,12 @@ for local verification. Registry installation examples describe intended distrib
 
 Go FFI library for Radroots.
 
+`make package-go` includes all tracked module files, including tests, and compares
+the prepared archive with Go's pinned official module-ZIP implementation. The
+local fixture adds only the eight prepared native archive/provenance files to
+its source commit and verifies identical member bytes and `h1` checksums. This
+check does not claim that a public tag or Go proxy release exists.
+
 ```bash
 go get github.com/radrootslabs/ffi/bindings/go@v0.0.0
 ```
