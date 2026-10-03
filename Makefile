@@ -219,3 +219,7 @@ setup-checks setup-c setup-cpp doctor-c doctor-cpp generate-c check-generated-c 
 .PHONY: test-tooling
 test-tooling:
 	@bash tools/radroots_ffi/make.sh test-tooling
+
+.PHONY: test-packaged-typescript
+test-packaged-typescript:
+	@bash tools/radroots_ffi/make.sh $@

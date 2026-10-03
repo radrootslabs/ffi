@@ -613,6 +613,7 @@ case "$1" in
     check-api) uv run --python 3.14.7 --no-project python tools/radroots_ffi/api.py ;;
     check-generation) uv run --python 3.14.7 --no-project python tools/radroots_ffi/generation.py ;;
     test-packaged-python) uv run --python 3.14.7 --no-project python tests/platforms/packaged.py python --artifacts "${RADROOTS_PACKAGE_ROOT:-$ROOT/build/dist}" ;;
+    test-packaged-typescript) uv run --python 3.14.7 --no-project python tests/platforms/packaged.py typescript --artifacts "${RADROOTS_PACKAGE_ROOT:-$ROOT/build/dist}" ;;
     test-tooling) uv run --python 3.14.7 --no-project python -m unittest discover -s tests/consumers -p "test_*.py" -v; uv run --python 3.14.7 --no-project python -m unittest discover -s tests/platforms -p test_mobile_helpers.py -v; uv run --python 3.14.7 --no-project python -m unittest discover -s tests/platforms -p test_targets.py -v ;;
     package-c) package_c ;;
     package-cpp) package_cpp ;;

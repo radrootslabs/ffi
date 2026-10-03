@@ -124,6 +124,13 @@ test("Chromium browser API contract", { timeout: 30000 }, async (t) => {
       );
       assert.deepEqual(messages, ["Radroots"]);
     });
+    t.diagnostic(
+      "RADROOTS_BROWSER_RUNTIME " +
+        JSON.stringify({
+          chromium: browser.version(),
+          user_agent: await page.evaluate(() => navigator.userAgent),
+        }),
+    );
   } finally {
     await browser?.close();
     await new Promise((resolve) => server.close(resolve));

@@ -112,6 +112,10 @@ def check(language, artifacts):
     try:
         if language == "python":
             python_consumer(artifacts)
+        elif language == "typescript":
+            from node_packaged import check as node_consumer
+
+            node_consumer(artifacts)
         else:
             raise ValueError("Unsupported packaged language")
     finally:
@@ -127,7 +131,7 @@ def check(language, artifacts):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("language", choices=("python",))
+    parser.add_argument("language", choices=("python", "typescript"))
     parser.add_argument("--artifacts", type=Path, required=True)
     arguments = parser.parse_args()
     check(arguments.language, arguments.artifacts)

@@ -431,6 +431,14 @@ include a negative assignment. This target requires the pinned Python, Docker
 and the locked checks environment (`make setup-checks`). Runtime evidence can
 be written outside the artifact directory with `RADROOTS_TEST_EVIDENCE`.
 
+`cargo extbuild run -- make package-typescript-all` prepares the five npm
+archives. `cargo extbuild run -- make test-packaged-typescript` qualifies those
+bytes on macOS arm64/x64, Linux arm64/x64 and Chromium without rebuilding the
+library. Consumer test code is compiled in a temporary environment. Locked npm
+test tools need registry access on a fresh cache; FFI packages install offline,
+and Linux consumers run without networking. Browser receipts include the actual
+Chromium version and user agent. macOS x64 execution uses Rosetta on arm64 hosts.
+
 `test-typescript-consumer`, `test-browser-consumer`, `test-kotlin-consumer`,
 `test-go-consumer` and `test-swift-consumer` use isolated installed packages.
 Python wheel and C/C++ installed-prefix checks are part of their normal tests.

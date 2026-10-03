@@ -425,6 +425,7 @@ def package_typescript(sdk=SDK):
 
 
 def test_typescript_consumer(browser=False, sdk=SDK, artifacts=None):
+    identity = None
     release = version(sdk)
     packages = Path(artifacts) if artifacts is not None else sdk / "build/dist/npm"
     main = packages / f"radroots-{release}.tgz"
@@ -451,7 +452,19 @@ def test_typescript_consumer(browser=False, sdk=SDK, artifacts=None):
             ],
             cwd=consumer,
         )
-        run(["npm", "test"], cwd=consumer)
+        output = run(["npm", "test"], cwd=consumer, capture=True).stdout
+        print(output, end="")
+        counts = dict(
+            re.findall(r"^# (tests|fail|cancelled|skipped) (\d+)$", output, re.M)
+        )
+        if (
+            not counts.get("tests")
+            or int(counts["tests"]) == 0
+            or any(counts.get(key) != "0" for key in ("fail", "cancelled", "skipped"))
+        ):
+            raise ValueError(
+                "Installed Node suite must pass without empty, skipped or cancelled tests"
+            )
         invalid = run(
             [
                 "node",
@@ -479,7 +492,28 @@ def test_typescript_consumer(browser=False, sdk=SDK, artifacts=None):
         print("PASS: Installed TypeScript declarations reject incorrect consumer types")
         run(["node", "unsupported-platform.mjs"], cwd=consumer)
         if browser:
-            run(["node", "--test", "test/browser/chromium.test.mjs"], cwd=consumer)
+            output = run(
+                [
+                    "node",
+                    "--test",
+                    "--test-reporter=tap",
+                    "test/browser/chromium.test.mjs",
+                ],
+                cwd=consumer,
+                capture=True,
+            ).stdout
+            print(output, end="")
+            marker = "# RADROOTS_BROWSER_RUNTIME "
+            identities = [
+                line.removeprefix(marker)
+                for line in output.splitlines()
+                if line.startswith(marker)
+            ]
+            if len(identities) != 1 or "# skipped 0\n" not in output:
+                raise ValueError(
+                    "Installed browser suite lacks runtime identity or skipped tests"
+                )
+            identity = json.loads(identities[0])
         missing = root / "missing"
         missing.mkdir()
         (missing / "package.json").write_text(
@@ -500,6 +534,7 @@ def test_typescript_consumer(browser=False, sdk=SDK, artifacts=None):
             cwd=missing,
         )
         run(["node", "missing-native.mjs"], cwd=missing)
+    return identity
 
 
 def pom_dependencies(path):

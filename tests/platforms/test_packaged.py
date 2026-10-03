@@ -3,11 +3,28 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+import node_packaged
 import packaged
 import python_runtime
 
 
 class FrozenArtifacts(unittest.TestCase):
+    def test_skipped_node_suite_cannot_pass(self):
+        with patch(
+            "node_packaged.run",
+            return_value="# tests 2\n# fail 0\n# cancelled 0\n# skipped 1\n",
+        ):
+            with self.assertRaisesRegex(ValueError, "without skips"):
+                node_packaged.suite([], None)
+
+    def test_empty_node_suite_cannot_pass(self):
+        with patch(
+            "node_packaged.run",
+            return_value="# tests 0\n# fail 0\n# cancelled 0\n# skipped 0\n",
+        ):
+            with self.assertRaisesRegex(ValueError, "empty"):
+                node_packaged.suite([], None)
+
     def test_consumer_mutation_fails_qualification(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
