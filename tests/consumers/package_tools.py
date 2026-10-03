@@ -155,7 +155,11 @@ def package_go(sdk, destination, prefix):
 def write_go_proxy(files, root, release):
     proxy = root / "github.com/radrootslabs/ffi/bindings/go/@v"
     proxy.mkdir(parents=True, exist_ok=True)
-    write_zip(files, proxy / f"v{release}.zip", f"github.com/radrootslabs/ffi/bindings/go@v{release}")
+    write_zip(
+        files,
+        proxy / f"v{release}.zip",
+        f"github.com/radrootslabs/ffi/bindings/go@v{release}",
+    )
     shutil.copyfile(files["go.mod"], proxy / f"v{release}.mod")
     (proxy / f"v{release}.info").write_text(
         json.dumps({"Version": f"v{release}", "Time": "2026-01-01T00:00:00Z"}) + "\n"
@@ -212,7 +216,11 @@ def test_go_consumer(sdk=SDK, artifacts=None):
             "GOPRIVATE": "",
             "GOMODCACHE": str(root / "cache"),
         }
-        run(["go", "mod", "download", "github.com/radrootslabs/ffi/bindings/go"], cwd=consumer, env=env)
+        run(
+            ["go", "mod", "download", "github.com/radrootslabs/ffi/bindings/go"],
+            cwd=consumer,
+            env=env,
+        )
         run(["go", "test", "-race", "-count=1", "-v", "./..."], cwd=consumer, env=env)
     run(
         [
@@ -309,10 +317,12 @@ def prepare_native_npm(sdk=SDK):
     targets = importlib.util.module_from_spec(specification)
     specification.loader.exec_module(targets)
     policy = targets.load(sdk)
-    installed = source / "node_modules/@napi-rs/cli"
+    installed = sdk / "node_modules/@napi-rs/cli"
     if (
         json.loads((installed / "package.json").read_text())["version"]
-        != metadata["devDependencies"]["@napi-rs/cli"]
+        != json.loads((sdk / "package.json").read_text())["devDependencies"][
+            "@napi-rs/cli"
+        ]
     ):
         raise ValueError("Node generator version differs; run make setup-typescript")
     staging = sdk / "build/typescript"

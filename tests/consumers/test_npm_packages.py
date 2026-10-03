@@ -21,6 +21,7 @@ class NativeNpmPackages(unittest.TestCase):
         self.sdk = Path(temporary.name)
         for name in (
             "Cargo.toml",
+            "package.json",
             "tests/platforms/targets.py",
             "tests/platforms/targets.json",
             "bindings/go/native-platforms.json",
@@ -32,8 +33,8 @@ class NativeNpmPackages(unittest.TestCase):
             path.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(SDK / name, path)
         self.source = self.sdk / "bindings/typescript"
-        (self.source / "node_modules").symlink_to(
-            SDK / "bindings/typescript/node_modules", target_is_directory=True
+        (self.sdk / "node_modules").symlink_to(
+            SDK / "node_modules", target_is_directory=True
         )
         self.metadata = json.loads((self.source / "package.json").read_text())
         self.policy = json.loads(

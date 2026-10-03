@@ -170,6 +170,9 @@ For Linux cross-build prerequisites, run `make setup-linux`.
 
 Requires Node 22.22.3 and npm, in addition to the shared Rust prerequisites.
 Setup installs locked npm dependencies, pinned wasm-pack and the Rust WASM target.
+Build tools are locked in the private root `package.json`/`package-lock.json`.
+The published facade manifest has no build-tool dependencies; setup installs
+from the root and does not resolve unpublished Radroots native packages.
 
 ```sh
 make setup-typescript
