@@ -101,9 +101,7 @@ class GoDistributionTests(unittest.TestCase):
 
     def test_missing_native_archive_is_rejected(self):
         self.archives[0].unlink()
-        with self.assertRaisesRegex(
-            ValueError, "Invalid or missing Go distribution file"
-        ):
+        with self.assertRaisesRegex(ValueError, "Invalid or missing distribution file"):
             distribution_files(self.sdk)
 
     def test_corrupt_native_archive_is_rejected(self):

@@ -49,7 +49,7 @@ def safe_file(root, name):
         or not path.is_file()
         or path.resolve() != path.absolute()
     ):
-        raise ValueError(f"Invalid or missing Go distribution file: {name}")
+        raise ValueError(f"Invalid or missing distribution file: {name}")
     return path
 
 
@@ -139,7 +139,8 @@ def write_zip(files, destination, prefix):
         with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED) as archive:
             for name, source in sorted(files.items()):
                 entry = zipfile.ZipInfo(
-                    f"{prefix}/{name}", date_time=(1980, 1, 1, 0, 0, 0)
+                    f"{prefix}/{name}" if prefix else name,
+                    date_time=(1980, 1, 1, 0, 0, 0),
                 )
                 entry.create_system = 3
                 entry.external_attr = 0o100644 << 16
@@ -615,6 +616,35 @@ def validate_maven(android=False, sdk=SDK, artifacts=None):
     print(f"PASS: Unsigned local Maven metadata and artifact inventories: {artifact}")
 
 
+def build_maven_bundle(sdk=SDK):
+    release = version(sdk)
+    repository = sdk / "build/dist/maven"
+    files = {}
+    for artifact, extension in (("radroots", "jar"), ("radroots-android", "aar")):
+        validate_maven(android=extension == "aar", sdk=sdk, artifacts=repository)
+        base = f"org/radroots/{artifact}/{release}/{artifact}-{release}"
+        for ending in (
+            "." + extension,
+            ".pom",
+            ".module",
+            "-sources.jar",
+            "-javadoc.jar",
+        ):
+            content = safe_file(repository, base + ending).read_bytes()
+            for checksum in ("", ".md5", ".sha1", ".sha256", ".sha512"):
+                name = base + ending + checksum
+                files[name] = safe_file(repository, name)
+                if (
+                    checksum
+                    and files[name].read_text().strip()
+                    != hashlib.new(checksum[1:], content).hexdigest()
+                ):
+                    raise ValueError(f"Maven checksum differs: {name}")
+    destination = repository / f"radroots-{release}-central-bundle.zip"
+    write_zip(files, destination, "")
+    print(f"Prepared unsigned Maven bundle: {destination}")
+
+
 def java8_executable():
     if os.environ.get("JAVA8_HOME"):
         executable = Path(os.environ["JAVA8_HOME"]) / "bin/java"
@@ -751,6 +781,22 @@ def test_kotlin_consumer(sdk=SDK, artifacts=None):
             ],
             cwd=consumer,
         )
+        reports = [
+            ET.parse(path).getroot()
+            for path in (consumer / "build/test-results/test").glob("TEST-*.xml")
+        ]
+        if (
+            not reports
+            or sum(int(report.attrib["tests"]) for report in reports) == 0
+            or any(
+                int(report.attrib.get(key, "0")) != 0
+                for report in reports
+                for key in ("failures", "errors", "skipped")
+            )
+        ):
+            raise ValueError(
+                "Installed JVM tests must pass without empty or skipped suites"
+            )
         fixture = consumer / "Consumer.java"
         shutil.copyfile(sdk / "tests/platforms/fixtures/jvm/Consumer.java", fixture)
         output = consumer / "java8-classes"
@@ -795,6 +841,7 @@ def main():
             "go-pack",
             "go-test",
             "maven-check",
+            "maven-bundle",
             "android-check",
             "kotlin-test",
         ),
@@ -816,6 +863,8 @@ def main():
         test_go_consumer(artifacts=arguments.artifacts)
     elif command == "maven-check":
         validate_maven(artifacts=arguments.artifacts)
+    elif command == "maven-bundle":
+        build_maven_bundle()
     elif command == "android-check":
         validate_maven(android=True, artifacts=arguments.artifacts)
     elif command == "kotlin-test":

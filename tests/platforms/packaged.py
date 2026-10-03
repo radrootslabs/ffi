@@ -116,6 +116,10 @@ def check(language, artifacts):
             from node_packaged import check as node_consumer
 
             node_consumer(artifacts)
+        elif language in ("kotlin", "android"):
+            from jvm_packaged import check as jvm_consumer
+
+            jvm_consumer(language, artifacts)
         else:
             raise ValueError("Unsupported packaged language")
     finally:
@@ -131,7 +135,9 @@ def check(language, artifacts):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("language", choices=("python", "typescript"))
+    parser.add_argument(
+        "language", choices=("python", "typescript", "kotlin", "android")
+    )
     parser.add_argument("--artifacts", type=Path, required=True)
     arguments = parser.parse_args()
     check(arguments.language, arguments.artifacts)

@@ -7,7 +7,7 @@ group = "org.radroots"
 
 version = "0.0.0"
 
-description = "Kotlin SDK for Radroots."
+description = "Kotlin FFI library for Radroots."
 
 android {
     namespace = "org.radroots.android"

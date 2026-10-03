@@ -439,6 +439,18 @@ test tools need registry access on a fresh cache; FFI packages install offline,
 and Linux consumers run without networking. Browser receipts include the actual
 Chromium version and user agent. macOS x64 execution uses Rosetta on arm64 hosts.
 
+Prepare JVM and Android packages with `make package-kotlin-all` and
+`make package-android`, then `make package-maven-bundle` (each through extbuild).
+The unsigned bundle includes both coordinates, sources/docs and Gradle-generated
+checksums. `make test-packaged-kotlin` installs the prepared bundle, executes
+the macOS arm64 JVM and Java 8/21 Linux consumers, and proves macOS x64 linkage.
+`make test-packaged-android` validates all three AAR ABIs, resolves only prepared
+Radroots coordinates, checks APK ELF/ZIP alignment and executes an isolated
+emulator with an observed 16384-byte page size. Missing candidate coordinates
+fail instead of resolving from another Maven repository. Set `ANDROID_HOME`
+to an installed API 36 SDK with build-tools 36, emulator tools and a Google APIs
+16 KiB arm64 image; the workstation's default SDK symlink is not release authority.
+
 `test-typescript-consumer`, `test-browser-consumer`, `test-kotlin-consumer`,
 `test-go-consumer` and `test-swift-consumer` use isolated installed packages.
 Python wheel and C/C++ installed-prefix checks are part of their normal tests.

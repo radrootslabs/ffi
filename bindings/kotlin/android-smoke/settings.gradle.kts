@@ -10,7 +10,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("repository") }
+        exclusiveContent {
+            forRepository { maven { url = uri("repository") } }
+            filter { includeGroup("org.radroots") }
+        }
     }
 }
 
