@@ -420,6 +420,17 @@ prepare the declared macOS/Linux native inventories on a macOS cross-build host.
 JVM and Android Gradle publication tasks only write a local Maven repository.
 Registry publication and signing remain external.
 
+Prepare the three Python wheels with `cargo extbuild run -- make build-python`
+and `cargo extbuild run -- make build-linux`. Then run
+`cargo extbuild run -- make test-packaged-python` to install only those prepared
+bytes into fresh environments on macOS arm64 and Linux arm64/x64. Set
+`RADROOTS_PACKAGE_ROOT` to qualify another prepared artifact directory. The
+harness rejects artifact changes, symlinked payloads, empty tests and skipped
+tests; Linux installations run without networking. Installed typing checks
+include a negative assignment. This target requires the pinned Python, Docker
+and the locked checks environment (`make setup-checks`). Runtime evidence can
+be written outside the artifact directory with `RADROOTS_TEST_EVIDENCE`.
+
 `test-typescript-consumer`, `test-browser-consumer`, `test-kotlin-consumer`,
 `test-go-consumer` and `test-swift-consumer` use isolated installed packages.
 Python wheel and C/C++ installed-prefix checks are part of their normal tests.

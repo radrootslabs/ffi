@@ -2,6 +2,7 @@ import subprocess
 import sys
 import unittest
 from concurrent.futures import ThreadPoolExecutor
+from importlib.metadata import metadata
 from pathlib import Path
 
 import radroots
@@ -11,6 +12,15 @@ class RadrootsTests(unittest.TestCase):
     def test_identity(self):
         self.assertEqual(radroots.NAME, "Radroots")
         self.assertEqual(radroots.name(), "Radroots")
+
+    def test_distribution_metadata(self):
+        distribution = metadata("radroots")
+        self.assertEqual(distribution["Name"], "radroots")
+        self.assertEqual(distribution["Version"], "0.0.0")
+        self.assertEqual(distribution["Version"], radroots.__version__)
+        self.assertEqual(
+            radroots.__all__, ["NAME", "__version__", "name", "print_name"]
+        )
 
     def test_repeated_calls(self):
         self.assertEqual([radroots.name() for _ in range(1000)], ["Radroots"] * 1000)

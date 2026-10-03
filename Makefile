@@ -1,4 +1,7 @@
 .DEFAULT_GOAL := help
+.PHONY: test-packaged-python
+test-packaged-python:
+	@bash tools/radroots_ffi/make.sh $@
 .PHONY: check-bootstrap check-api check-generation
 check-bootstrap check-api check-generation:
 	@bash tools/radroots_ffi/make.sh $@
