@@ -449,6 +449,15 @@ Native deployment baselines are macOS 11, iOS 13, glibc 2.17 and Android API 28.
 The JVM artifact targets Java 8 bytecode; builds use Java 21. Baselines do not
 imply testing on every historical OS version.
 
+Apple FFI dylibs use an `@rpath` install name. Distributed Apple static archives
+are stripped with deterministic archive dates, and XCFramework plist ordering is
+normalized before packaging. Swift deployment values enter Cargo's compiler
+fingerprint through a derived cfg value; extbuild retains target-directory
+ownership. The FFI build script also tracks deployment environment changes.
+Linux release dylibs discard debug sections through the checked-in linker script.
+Android native builds append 16 KiB alignment flags and strip debug/comment
+sections from distributed copies without rewriting Cargo's cached artifacts.
+
 <!-- support:start -->
 | FFI library | Runtime test targets | Build/link targets | Planned |
 | --- | --- | --- | --- |

@@ -7,7 +7,7 @@ inputs = [
   "crates/example/Cargo.toml", "crates/ffi/Cargo.toml",
   "crates/c/Cargo.toml", "crates/node/Cargo.toml", "crates/wasm/Cargo.toml",
   "crates/example/src/lib.rs", "crates/ffi/src/lib.rs",
-  "crates/ffi/src/bin/uniffi-bindgen.rs", "crates/c/build.rs", "crates/node/build.rs",
+  "crates/ffi/build.rs", "crates/ffi/linux.ld", "crates/ffi/src/bin/uniffi-bindgen.rs", "crates/c/build.rs", "crates/node/build.rs",
   "crates/ffi/uniffi.toml", "crates/ffi/go-bindgen.json",
   "crates/c/src/lib.rs", "crates/c/cbindgen.toml",
   "crates/node/src/lib.rs", "crates/wasm/src/lib.rs",

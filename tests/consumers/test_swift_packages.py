@@ -1,3 +1,4 @@
+import plistlib
 import shutil
 import stat
 import tempfile
@@ -51,6 +52,33 @@ class SwiftPackages(unittest.TestCase):
             (extracted / "Package.swift").read_bytes(),
             (self.staged / "Package.swift").read_bytes(),
         )
+
+    def test_framework_normalization_is_order_independent_and_idempotent(self):
+        manifest = self.sdk / "build/swift/Radroots.xcframework/Info.plist"
+        libraries = [
+            {
+                "LibraryIdentifier": "macos",
+                "SupportedArchitectures": ["x86_64", "arm64"],
+            },
+            {"LibraryIdentifier": "ios", "SupportedArchitectures": ["arm64"]},
+        ]
+        manifest.write_bytes(plistlib.dumps({"AvailableLibraries": libraries}))
+        swift_packages.normalize_framework(self.sdk)
+        expected = manifest.read_bytes()
+        libraries.reverse()
+        libraries[1]["SupportedArchitectures"].reverse()
+        manifest.write_bytes(plistlib.dumps({"AvailableLibraries": libraries}))
+        swift_packages.normalize_framework(self.sdk)
+        self.assertEqual(expected, manifest.read_bytes())
+        swift_packages.normalize_framework(self.sdk)
+        self.assertEqual(expected, manifest.read_bytes())
+
+    def test_framework_normalization_rejects_duplicate_slices(self):
+        manifest = self.sdk / "build/swift/Radroots.xcframework/Info.plist"
+        library = {"LibraryIdentifier": "macos", "SupportedArchitectures": ["arm64"]}
+        manifest.write_bytes(plistlib.dumps({"AvailableLibraries": [library, library]}))
+        with self.assertRaisesRegex(ValueError, "Duplicate framework library"):
+            swift_packages.normalize_framework(self.sdk)
 
     def test_rejects_stale_source_and_manifest(self):
         source = self.staged / "Sources/Radroots/Radroots.swift"

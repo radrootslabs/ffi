@@ -29,7 +29,10 @@
     "tests/platforms/targets.json",
     "tests/consumers/package_tools.py",
     "crates/example/Cargo.toml",
-    "crates/example/src/lib.rs"
+    "crates/example/src/lib.rs",
+    "crates/ffi/build.rs",
+    "crates/ffi/linux.ld",
+    "tools/radroots_ffi/rust.sh"
   ],
   "package_files": [
     "go.mod",

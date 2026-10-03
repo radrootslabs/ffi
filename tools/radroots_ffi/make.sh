@@ -156,6 +156,7 @@ stage_go_native() {
     archive="bindings/go/internal/native/lib/$platform/libradroots_ffi.a"
     mkdir -p "$(dirname "$archive")"
     cp "$(target_dir)/$target/release/libradroots_ffi.a" "$archive"
+    case "$target" in *-apple-*) ZERO_AR_DATE=1 xcrun strip -S "$archive" ;; esac
     {
         while IFS= read -r file; do
             digest=$(shasum -a 256 "$file" | cut -d ' ' -f 1)
@@ -260,16 +261,21 @@ build_swift_apple() (
     IPHONEOS_DEPLOYMENT_TARGET=$(sed -nE 's/.*\.iOS\("([^"]+)"\).*/\1/p' Package.swift)
     [[ -n "$MACOSX_DEPLOYMENT_TARGET" && -n "$IPHONEOS_DEPLOYMENT_TARGET" ]] || die 'Missing Apple deployment targets in Package.swift'
     export MACOSX_DEPLOYMENT_TARGET IPHONEOS_DEPLOYMENT_TARGET
-    local target
+    local deployment_key
+    deployment_key=$(printf "%s\n%s\n" "$MACOSX_DEPLOYMENT_TARGET" "$IPHONEOS_DEPLOYMENT_TARGET" | shasum -a 256 | cut -d " " -f 1)
+    local target swift_rust_flags
+    swift_rust_flags=$(rust_flags "--cfg" "radroots_ffi_deployment=\"$deployment_key\"")
     for target in aarch64-apple-darwin x86_64-apple-darwin aarch64-apple-ios aarch64-apple-ios-sim x86_64-apple-ios; do
-        cargo build --locked --release -p radroots_ffi --target "$target"
+        CARGO_ENCODED_RUSTFLAGS="$swift_rust_flags" cargo build --locked --release -p radroots_ffi --target "$target"
     done
     rm -rf build/swift
-    mkdir -p build/swift/include build/swift/macos build/swift/simulator
+    mkdir -p build/swift/include build/swift/macos build/swift/simulator build/swift/ios
     cp bindings/swift/Sources/RadrootsBindings/RadrootsNative.h build/swift/include/
     cp bindings/swift/Sources/RadrootsBindings/RadrootsNative.modulemap build/swift/include/module.modulemap
     lipo -create "$(target_dir)/aarch64-apple-darwin/release/libradroots_ffi.a" "$(target_dir)/x86_64-apple-darwin/release/libradroots_ffi.a" -output build/swift/macos/libradroots_ffi.a
     lipo -create "$(target_dir)/aarch64-apple-ios-sim/release/libradroots_ffi.a" "$(target_dir)/x86_64-apple-ios/release/libradroots_ffi.a" -output build/swift/simulator/libradroots_ffi.a
+    cp "$(target_dir)/aarch64-apple-ios/release/libradroots_ffi.a" build/swift/ios/
+    ZERO_AR_DATE=1 xcrun strip -S build/swift/macos/libradroots_ffi.a build/swift/simulator/libradroots_ffi.a build/swift/ios/libradroots_ffi.a
     rm -rf build/swift/Radroots.xcframework
     local framework="$EXT_BUILD_PROJECT_DIR/artifacts/swift/Radroots.xcframework"
     mkdir -p "$(dirname "$framework")"
@@ -277,9 +283,10 @@ build_swift_apple() (
     xcodebuild -create-xcframework \
       -library "$ROOT/build/swift/macos/libradroots_ffi.a" -headers "$ROOT/build/swift/include" \
       -library "$ROOT/build/swift/simulator/libradroots_ffi.a" -headers "$ROOT/build/swift/include" \
-      -library "$(target_dir)/aarch64-apple-ios/release/libradroots_ffi.a" -headers "$ROOT/build/swift/include" \
+      -library "$ROOT/build/swift/ios/libradroots_ffi.a" -headers "$ROOT/build/swift/include" \
       -output "$framework"
     cp -R "$framework" build/swift/Radroots.xcframework
+    uv run --python 3.14.7 --no-project python tests/consumers/swift_packages.py normalize
     swift_inventory > build/swift/receipt.txt
 )
 build_linux_native() {
@@ -356,6 +363,7 @@ build_android() {
         CARGO_ENCODED_RUSTFLAGS=$(rust_flags "-C" "link-arg=-Wl,-z,max-page-size=$alignment") cargo build --locked --release -p radroots_ffi --target "$target"
         mkdir -p "build/android/jni/$abi"
         cp "$(target_dir)/$target/release/libradroots_ffi.so" "build/android/jni/$abi/"
+        "$ndk/llvm-strip" --strip-debug --remove-section=.comment "build/android/jni/$abi/libradroots_ffi.so"
         "$ndk/llvm-readelf" -l "build/android/jni/$abi/libradroots_ffi.so" > "build/android/$abi-elf.txt"
     done
 }
