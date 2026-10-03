@@ -120,6 +120,7 @@ def check(language, artifacts):
         for cpu, suffix in (("arm64", "arm64"), ("amd64", "x64")):
             for version in (8, 21):
                 image = f"eclipse-temurin:{version}-jdk-jammy"
+                mode, runtime = container_runtime(image, cpu)
                 code = f'cp /artifacts/Consumer.java . && javac -cp {coordinate} Consumer.java && java -version >&2 && java -Djna.nosys=true -cp ".:{coordinate}:/artifacts/runtime/*" Consumer'
                 stdout, stderr = run(
                     [
@@ -133,7 +134,7 @@ def check(language, artifacts):
                         f"type=bind,src={root},dst=/artifacts,readonly",
                         "--workdir",
                         "/tmp",
-                        image,
+                        runtime["image_id"],
                         "sh",
                         "-ec",
                         code,
@@ -143,6 +144,5 @@ def check(language, artifacts):
                     raise ValueError(
                         "Installed JVM consumer produced unexpected output"
                     )
-                mode, runtime = container_runtime(image, cpu)
                 runtime["java"] = stderr.strip()
                 record("kotlin", "linux-" + suffix, mode, runtime, cpu=cpu)

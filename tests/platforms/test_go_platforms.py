@@ -158,6 +158,9 @@ class GoPlatforms(unittest.TestCase):
                             str(binary),
                         ]
                     else:
+                        mode, runtime = container_runtime(
+                            "node:22.22.3-bookworm-slim", arch
+                        )
                         command = [
                             "docker",
                             "run",
@@ -169,7 +172,7 @@ class GoPlatforms(unittest.TestCase):
                             f"type=bind,src={root},dst=/consumer,readonly",
                             "--entrypoint",
                             f"/consumer/{binary.name}",
-                            "node:22.22.3-bookworm-slim",
+                            runtime["image_id"],
                         ]
                     result = subprocess.run(command, capture_output=True, text=True)
                     self.assertEqual(result.returncode, 0, result.stderr)
@@ -182,10 +185,6 @@ class GoPlatforms(unittest.TestCase):
                             else "rosetta"
                         )
                         runtime = {"os": platform.platform()}
-                    else:
-                        mode, runtime = container_runtime(
-                            "node:22.22.3-bookworm-slim", arch
-                        )
                     runtime["go"] = subprocess.check_output(
                         ["go", "version"], cwd=consumer, env=env, text=True
                     ).strip()
@@ -230,16 +229,16 @@ class GoPlatforms(unittest.TestCase):
             )
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("libradroots_ffi.a", result.stderr)
-            env.update(GOOS="windows", GOARCH="amd64")
+            env.update(GOOS="windows", GOARCH="amd64", CGO_ENABLED="0")
             result = subprocess.run(
-                ["bash", "tools/radroots_ffi/make.sh", "doctor-go"],
-                cwd=SDK,
+                ["go", "build", "-mod=mod", "."],
+                cwd=consumer,
                 env=env,
                 capture_output=True,
                 text=True,
             )
             self.assertNotEqual(result.returncode, 0)
-            self.assertIn("unsupported", result.stderr.lower())
+            self.assertIn("build constraints", result.stderr.lower())
 
     def proxy_files_for_failure(self, module):
         return {

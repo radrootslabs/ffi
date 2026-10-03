@@ -613,6 +613,7 @@ case "$1" in
     check-api) uv run --python 3.14.7 --no-project python tools/radroots_ffi/api.py ;;
     check-generation) uv run --python 3.14.7 --no-project python tools/radroots_ffi/generation.py ;;
     test-packaged-python) uv run --python 3.14.7 --no-project python tests/platforms/packaged.py python --artifacts "${RADROOTS_PACKAGE_ROOT:-$ROOT/build/dist}" ;;
+    test-packaged-linux) uv run --python 3.14.7 --no-project python tests/platforms/packaged.py linux --artifacts "${RADROOTS_PACKAGE_ROOT:-$ROOT/build/dist}" ;;
     test-packaged-typescript) uv run --python 3.14.7 --no-project python tests/platforms/packaged.py typescript --artifacts "${RADROOTS_PACKAGE_ROOT:-$ROOT/build/dist}" ;;
     test-packaged-kotlin) uv run --python 3.14.7 --no-project python tests/platforms/packaged.py kotlin --artifacts "${RADROOTS_PACKAGE_ROOT:-$ROOT/build/dist}" ;;
     test-packaged-go) uv run --python 3.14.7 --no-project python tests/platforms/packaged.py go --artifacts "${RADROOTS_PACKAGE_ROOT:-$ROOT/build/dist}" ;;
@@ -624,7 +625,7 @@ case "$1" in
     update-swift-remote) uv run --python 3.14.7 --no-project python tests/consumers/swift_packages.py remote-update ;;
     test-packaged-android) uv run --python 3.14.7 --no-project python tests/platforms/packaged.py android --artifacts "${RADROOTS_PACKAGE_ROOT:-$ROOT/build/dist}" ;;
     package-maven-bundle) package_tool maven-bundle ;;
-    test-tooling) uv run --python 3.14.7 --no-project python -m unittest discover -s tests/consumers -p "test_*.py" -v; uv run --python 3.14.7 --no-project python -m unittest discover -s tests/platforms -p test_mobile_helpers.py -v; uv run --python 3.14.7 --no-project python -m unittest discover -s tests/platforms -p test_targets.py -v ;;
+    test-tooling) uv run --python 3.14.7 --no-project python -m unittest discover -s tests/consumers -p "test_*.py" -v; uv run --python 3.14.7 --no-project python -m unittest discover -s tests/platforms -p test_mobile_helpers.py -v; uv run --python 3.14.7 --no-project python -m unittest discover -s tests/platforms -p test_targets.py -v; uv run --python 3.14.7 --no-project python -m unittest discover -s tests/platforms -p test_packaged.py -v ;;
     package-c) package_c ;;
     package-cpp) package_cpp ;;
     test-c-package) test_c_package ;;

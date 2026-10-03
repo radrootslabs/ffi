@@ -7,6 +7,18 @@ queries, callbacks or async runtime are exposed yet.
 
 ## Development commands
 
+The frozen harness exposes `make test-packaged-{python,typescript,kotlin,linux,go,swift,ios,android,c,cpp}`.
+Set `RADROOTS_PACKAGE_ROOT` to a prepared artifact directory. The Linux family
+aggregates the same Python, Node/WASM and JVM consumers, including their host
+prerequisites; it requires both Linux architectures for each language. Every
+invocation blocks Rust producers, rejects empty/skipped suites, requires actual
+runtime evidence for its matrix, and compares the entire artifact inventory before
+and after consumption. Set `RADROOTS_TEST_EVIDENCE` to retain successful JSONL
+runtime records; the command also emits them with its frozen-hash receipt.
+Docker consumers run without network access against the immutable image ID
+inspected before execution. Tool installation and dependency setup are preparation
+operations, separate from frozen-library qualification.
+
 Run commands from a standalone checkout. `make help` lists the available tasks.
 All Make targets delegate to `tools/radroots_ffi/make.sh`.
 Activate the pinned toolchains before setup.

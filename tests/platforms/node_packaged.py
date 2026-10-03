@@ -34,6 +34,7 @@ def suite(command, cwd):
         raise ValueError(
             "Installed Node suite must pass without skips or cancellations"
         )
+    return output
 
 
 def check(artifacts):
@@ -108,15 +109,16 @@ def check(artifacts):
         )
         for cpu, suffix in (("arm64", "arm64"), ("amd64", "x64")):
             image = "node:22.22.3-bookworm-slim"
+            mode, runtime = container_runtime(image, cpu)
             code = (
                 "mkdir /tmp/consumer && cd /tmp/consumer && "
                 "cp /artifacts/package.json . && cp -R /artifacts/test . && "
                 "npm install --offline --ignore-scripts --no-audit --no-fund "
                 f"/artifacts/npm/radroots-{release}.tgz "
                 f"/artifacts/npm/radroots-native-linux-{suffix}-gnu-{release}.tgz >/dev/null && "
-                "node --test --test-reporter=tap test/node.test.js test/wasm.test.js"
+                "node --version && node --test --test-reporter=tap test/node.test.js test/wasm.test.js"
             )
-            suite(
+            output = suite(
                 [
                     "docker",
                     "run",
@@ -126,12 +128,14 @@ def check(artifacts):
                     "linux/" + cpu,
                     "--mount",
                     f"type=bind,src={root},dst=/artifacts,readonly",
-                    image,
+                    runtime["image_id"],
                     "sh",
                     "-ec",
                     code,
                 ],
                 root,
             )
-            mode, runtime = container_runtime(image, cpu)
+            runtime["node"] = re.search(
+                r"^v[0-9]+\.[0-9]+\.[0-9]+$", output, re.M
+            ).group()
             record("typescript", "linux-" + suffix, mode, runtime, cpu=cpu)
