@@ -30,8 +30,8 @@ make check-rust
 ```
 
 `make help` lists the complete command surface.
-Swift's root manifest consumes a locally built XCFramework;
-run `make build-swift` first. Package names and remote-install examples in the
+Swift's root manifest uses the versioned release XCFramework;
+`make build-swift` stages a separate local development package. Package names and remote-install examples in the
 language READMEs describe intended distributions, not currently published
 packages. Local package tests work without publishing the FFI library.
 

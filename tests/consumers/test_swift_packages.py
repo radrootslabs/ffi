@@ -11,6 +11,30 @@ import swift_packages
 
 
 class SwiftPackages(unittest.TestCase):
+    def test_remote_manifest_checksum_tracks_prepared_bytes(self):
+        swift_packages.package_swift(self.sdk)
+        manifest = self.sdk / "Package.swift"
+        manifest.write_text((swift_packages.SDK / "Package.swift").read_text())
+        checksum = swift_packages.remote_manifest(self.sdk, update=True)
+        self.assertEqual(swift_packages.remote_manifest(self.sdk), checksum)
+        artifact = self.sdk / "build/dist/swift/Radroots.xcframework.zip"
+        artifact.write_bytes(artifact.read_bytes() + b"changed")
+        with self.assertRaisesRegex(ValueError, "checksum differs"):
+            swift_packages.remote_manifest(self.sdk)
+
+    def test_remote_manifest_rejects_wrong_destination_before_update(self):
+        swift_packages.package_swift(self.sdk)
+        manifest = self.sdk / "Package.swift"
+        text = (
+            (swift_packages.SDK / "Package.swift")
+            .read_text()
+            .replace("radrootslabs/ffi/releases", "example/other/releases")
+        )
+        manifest.write_text(text)
+        with self.assertRaisesRegex(ValueError, "asset URL"):
+            swift_packages.remote_manifest(self.sdk, update=True)
+        self.assertEqual(manifest.read_text(), text)
+
     def setUp(self):
         temporary = tempfile.TemporaryDirectory(prefix="radroots-swift-package-tests-")
         self.addCleanup(temporary.cleanup)

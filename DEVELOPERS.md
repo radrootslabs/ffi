@@ -483,6 +483,18 @@ and shared CMake packages, pkg-config, caller sanitizers and C++ with exceptions
 disabled. Rust and generator tools are blocked in installed CMake consumers;
 C-only consumption also blocks C++ compilers. The release lane is macOS arm64.
 
+The root Swift manifest uses the canonical GitHub `v0.0.0` XCFramework asset
+URL. `make package-swift` prepares deterministic local ZIPs;
+`make update-swift-remote` writes the prepared XCFramework checksum and
+`make check-swift-remote` rejects drift. Only the checksum declaration is excluded
+from the native Swift build receipt to avoid a checksum cycle. The full manifest
+belongs to the candidate source identity. `make test-packaged-swift` and
+`make test-packaged-ios` consume prepared ZIPs without Rust library rebuilds,
+covering both macOS architectures, device/x64 simulator linkage and an owned
+arm64 simulator runtime. All commands route through extbuild. Freeze the final
+committed source and reprepare identical native bytes before release. Root remote
+resolution remains unclaimed until approved public assets are available.
+
 `tests/platforms/targets.json` owns intended targets, native deployment floors,
 and effective per-language floors. `make update-support` regenerates the
 [target summary](#intended-targets) in this document without private files;

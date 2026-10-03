@@ -1,6 +1,8 @@
 import argparse
+import hashlib
 import os
 import plistlib
+import re
 import shutil
 import stat
 import subprocess
@@ -107,6 +109,42 @@ def package_swift(sdk=SDK):
     return package
 
 
+def remote_manifest(sdk=SDK, update=False):
+    sdk = Path(sdk)
+    artifact = regular_files(sdk / "build/dist/swift")["Radroots.xcframework.zip"]
+    checksum = hashlib.sha256(artifact.read_bytes()).hexdigest()
+    manifest = sdk / "Package.swift"
+    if manifest.is_symlink() or not manifest.is_file():
+        raise ValueError("Remote Swift manifest must be a regular file")
+    text = manifest.read_text()
+    if len(re.findall(r'^let releaseChecksum = "[0-9a-f]{64}"$', text, re.M)) != 1:
+        raise ValueError("Remote Swift manifest requires one checksum declaration")
+    if f'let releaseTag = "v{version(sdk)}"' not in text:
+        raise ValueError("Remote Swift manifest version differs")
+    if (
+        "https://github.com/radrootslabs/ffi/releases/download/\\(releaseTag)/Radroots.xcframework.zip"
+        not in text
+    ):
+        raise ValueError("Remote Swift manifest asset URL differs")
+    if update:
+        text = re.sub(
+            r'^let releaseChecksum = "[0-9a-f]{64}"$',
+            f'let releaseChecksum = "{checksum}"',
+            text,
+            flags=re.M,
+        )
+        with tempfile.TemporaryDirectory(
+            prefix=".swift-manifest-", dir=sdk
+        ) as temporary:
+            output = Path(temporary) / "Package.swift"
+            output.write_text(text)
+            output.chmod(0o644)
+            output.replace(manifest)
+    if f'let releaseChecksum = "{checksum}"' not in text:
+        raise ValueError("Remote Swift manifest checksum differs from prepared bytes")
+    return checksum
+
+
 def extract_package(artifact, destination, release):
     destination = Path(destination)
     if destination.exists() or destination.is_symlink():
@@ -188,7 +226,7 @@ def test_swift_consumer(sdk=SDK, artifact=None):
             "LD_LIBRARY_PATH",
         ):
             env.pop(key, None)
-        subprocess.run(
+        result = subprocess.run(
             [
                 "/usr/bin/swift",
                 "test",
@@ -200,19 +238,36 @@ def test_swift_consumer(sdk=SDK, artifact=None):
             cwd=root,
             env=env,
             check=True,
+            capture_output=True,
+            text=True,
         )
+        output = result.stdout + result.stderr
+        print(output, end="")
+        counts = re.findall(r"Executed (\d+) tests?, with (\d+) failures", output)
+        if (
+            not counts
+            or not any(int(count) > 0 for count, _ in counts)
+            or any(int(failures) for _, failures in counts)
+            or re.search(r"Test Case .* skipped", output)
+        ):
+            raise ValueError("Installed Swift XCTest suite must pass without skips")
         print("PASS: Extracted Swift package consumer with Rust absent from PATH")
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("command", choices=("normalize", "package", "test"))
+    parser.add_argument(
+        "command",
+        choices=("normalize", "package", "test", "remote-check", "remote-update"),
+    )
     parser.add_argument("--artifact", type=Path)
     arguments = parser.parse_args()
     if arguments.command == "normalize":
         normalize_framework()
     elif arguments.command == "package":
         package_swift()
+    elif arguments.command in ("remote-check", "remote-update"):
+        print(remote_manifest(update=arguments.command == "remote-update"))
     else:
         test_swift_consumer(artifact=arguments.artifact)
 

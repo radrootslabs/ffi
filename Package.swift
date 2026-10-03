@@ -1,6 +1,9 @@
 // swift-tools-version: 6.3
 import PackageDescription
 
+let releaseTag = "v0.0.0"
+let releaseChecksum = "7c53506222541666e84040f2ce6e4370e77f8d2be0a8a9152802deb5fff0b9ed"
+
 let package = Package(
   name: "Radroots",
   platforms: [.macOS("11.0"), .iOS("13.0")],
@@ -10,7 +13,9 @@ let package = Package(
   targets: [
     .binaryTarget(
       name: "RadrootsNative",
-      path: "build/swift/Radroots.xcframework"),
+      url:
+        "https://github.com/radrootslabs/ffi/releases/download/\(releaseTag)/Radroots.xcframework.zip",
+      checksum: releaseChecksum),
     .executableTarget(
       name: "PrintName", dependencies: ["Radroots"],
       path: "bindings/swift/Tests/Fixtures/PrintName"),

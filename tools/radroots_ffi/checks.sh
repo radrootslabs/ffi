@@ -67,7 +67,7 @@ check_kotlin() { kotlin_format --dry-run --set-exit-if-changed; }
 swift_format() {
     doctor_swift
     local files=(Package.swift) file
-    while IFS= read -r file; do files+=("$file"); done < <(find bindings/swift tests/consumers/swift -type f -name '*.swift' ! -path '*/RadrootsBindings/*')
+    while IFS= read -r file; do files+=("$file"); done < <(find bindings/swift tests/consumers/swift tests/consumers/swift-remote -type f -name '*.swift' ! -path '*/RadrootsBindings/*')
     swift format "$@" "${files[@]}"
 }
 format_swift() { swift_format --in-place; }

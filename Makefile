@@ -235,3 +235,7 @@ test-packaged-go:
 .PHONY: test-packaged-c test-packaged-cpp
 test-packaged-c test-packaged-cpp:
 	@bash tools/radroots_ffi/make.sh $@
+
+.PHONY: test-packaged-swift test-packaged-ios check-swift-remote update-swift-remote
+test-packaged-swift test-packaged-ios check-swift-remote update-swift-remote:
+	@bash tools/radroots_ffi/make.sh $@

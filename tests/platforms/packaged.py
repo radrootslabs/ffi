@@ -158,6 +158,49 @@ def check(language, artifacts):
                         ).strip(),
                     },
                 )
+        elif language in ("swift", "ios"):
+            from jvm_packaged import run_suite
+            from test_ios import IOSConsumer
+            from test_swift_platforms import SwiftPlatforms
+
+            version = tomllib.loads((ROOT / "Cargo.toml").read_text())["workspace"][
+                "package"
+            ]["version"]
+            archive = artifacts / f"swift/radroots-swift-{version}.zip"
+            if language == "swift":
+                run(
+                    [
+                        sys.executable,
+                        ROOT / "tests/consumers/swift_packages.py",
+                        "test",
+                        "--artifact",
+                        archive,
+                    ]
+                )
+            with tempfile.TemporaryDirectory(
+                prefix="radroots-swift-packaged-"
+            ) as temporary:
+                from test_linux_packages import packages
+
+                root = Path(temporary)
+                packages.extract_zip(archive, root)
+                package = root / f"radroots-swift-{version}"
+                run_suite(
+                    SwiftPlatforms if language == "swift" else IOSConsumer,
+                    package=package,
+                )
+            if language == "swift":
+                record(
+                    "swift",
+                    "macos-" + architecture(),
+                    "native",
+                    {
+                        "swift": subprocess.check_output(
+                            ["swift", "--version"], text=True
+                        ).strip(),
+                        "os": platform.platform(),
+                    },
+                )
         else:
             raise ValueError("Unsupported packaged language")
     finally:
@@ -175,7 +218,17 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "language",
-        choices=("python", "typescript", "kotlin", "android", "go", "c", "cpp"),
+        choices=(
+            "python",
+            "typescript",
+            "kotlin",
+            "android",
+            "go",
+            "c",
+            "cpp",
+            "swift",
+            "ios",
+        ),
     )
     parser.add_argument("--artifacts", type=Path, required=True)
     arguments = parser.parse_args()

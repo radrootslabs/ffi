@@ -243,8 +243,8 @@ build_swift() {
     swift build --package-path build/swift-dev --scratch-path "$SWIFTPM_SCRATCH" --cache-path "$SWIFTPM_CACHE"
 }
 swift_inventory() {
-    shasum -a 256 Cargo.toml Cargo.lock rust-toolchain.toml crates/example/Cargo.toml crates/example/src/lib.rs crates/ffi/Cargo.toml crates/ffi/uniffi.toml tools/radroots_ffi/make.sh tools/radroots_ffi/swift.sh bindings/swift/dev/Package.swift
-    shasum -a 256 Package.swift
+    shasum -a 256 Cargo.toml Cargo.lock rust-toolchain.toml crates/example/Cargo.toml crates/example/src/lib.rs crates/ffi/Cargo.toml crates/ffi/build.rs crates/ffi/uniffi.toml tools/radroots_ffi/make.sh tools/radroots_ffi/rust.sh tools/radroots_ffi/swift.sh tests/consumers/swift_packages.py bindings/swift/dev/Package.swift
+    sed '/^let releaseChecksum = /d' Package.swift | shasum -a 256
     find crates/ffi/src bindings/swift/Sources build/swift/Radroots.xcframework -type f -print | LC_ALL=C sort | while IFS= read -r file; do shasum -a 256 "$file"; done
     rustc --version
     swift --version
@@ -618,6 +618,10 @@ case "$1" in
     test-packaged-go) uv run --python 3.14.7 --no-project python tests/platforms/packaged.py go --artifacts "${RADROOTS_PACKAGE_ROOT:-$ROOT/build/dist}" ;;
     test-packaged-c) uv run --python 3.14.7 --no-project python tests/platforms/packaged.py c --artifacts "${RADROOTS_PACKAGE_ROOT:-$ROOT/build/dist}" ;;
     test-packaged-cpp) uv run --python 3.14.7 --no-project python tests/platforms/packaged.py cpp --artifacts "${RADROOTS_PACKAGE_ROOT:-$ROOT/build/dist}" ;;
+    test-packaged-swift) uv run --python 3.14.7 --no-project python tests/platforms/packaged.py swift --artifacts "${RADROOTS_PACKAGE_ROOT:-$ROOT/build/dist}" ;;
+    test-packaged-ios) uv run --python 3.14.7 --no-project python tests/platforms/packaged.py ios --artifacts "${RADROOTS_PACKAGE_ROOT:-$ROOT/build/dist}" ;;
+    check-swift-remote) uv run --python 3.14.7 --no-project python tests/consumers/swift_packages.py remote-check ;;
+    update-swift-remote) uv run --python 3.14.7 --no-project python tests/consumers/swift_packages.py remote-update ;;
     test-packaged-android) uv run --python 3.14.7 --no-project python tests/platforms/packaged.py android --artifacts "${RADROOTS_PACKAGE_ROOT:-$ROOT/build/dist}" ;;
     package-maven-bundle) package_tool maven-bundle ;;
     test-tooling) uv run --python 3.14.7 --no-project python -m unittest discover -s tests/consumers -p "test_*.py" -v; uv run --python 3.14.7 --no-project python -m unittest discover -s tests/platforms -p test_mobile_helpers.py -v; uv run --python 3.14.7 --no-project python -m unittest discover -s tests/platforms -p test_targets.py -v ;;
