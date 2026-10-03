@@ -231,3 +231,7 @@ test-packaged-kotlin test-packaged-android package-maven-bundle:
 .PHONY: test-packaged-go
 test-packaged-go:
 	@bash tools/radroots_ffi/make.sh $@
+
+.PHONY: test-packaged-c test-packaged-cpp
+test-packaged-c test-packaged-cpp:
+	@bash tools/radroots_ffi/make.sh $@

@@ -3,6 +3,7 @@ import hashlib
 import json
 import platform
 import subprocess
+import sys
 import tempfile
 import tomllib
 from pathlib import Path
@@ -135,6 +136,28 @@ def check(language, artifacts):
                 module = root / f"github.com/radrootslabs/ffi/bindings/go@v{version}"
                 packages.distribution_files(ROOT, module)
                 run_suite(GoPlatforms, module=module, module_zip=archive)
+        elif language in ("c", "cpp"):
+            run(
+                [
+                    sys.executable,
+                    ROOT / "tests/consumers/native_packages.py",
+                    f"test-{language}-package",
+                    "--artifacts",
+                    artifacts,
+                ]
+            )
+            for family in ("c", "cpp") if language == "cpp" else ("c",):
+                record(
+                    family,
+                    "macos-" + architecture(),
+                    "native",
+                    {
+                        "os": platform.platform(),
+                        "compiler": subprocess.check_output(
+                            ["cc" if family == "c" else "c++", "--version"], text=True
+                        ).strip(),
+                    },
+                )
         else:
             raise ValueError("Unsupported packaged language")
     finally:
@@ -151,7 +174,8 @@ def check(language, artifacts):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "language", choices=("python", "typescript", "kotlin", "android", "go")
+        "language",
+        choices=("python", "typescript", "kotlin", "android", "go", "c", "cpp"),
     )
     parser.add_argument("--artifacts", type=Path, required=True)
     arguments = parser.parse_args()

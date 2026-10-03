@@ -616,6 +616,8 @@ case "$1" in
     test-packaged-typescript) uv run --python 3.14.7 --no-project python tests/platforms/packaged.py typescript --artifacts "${RADROOTS_PACKAGE_ROOT:-$ROOT/build/dist}" ;;
     test-packaged-kotlin) uv run --python 3.14.7 --no-project python tests/platforms/packaged.py kotlin --artifacts "${RADROOTS_PACKAGE_ROOT:-$ROOT/build/dist}" ;;
     test-packaged-go) uv run --python 3.14.7 --no-project python tests/platforms/packaged.py go --artifacts "${RADROOTS_PACKAGE_ROOT:-$ROOT/build/dist}" ;;
+    test-packaged-c) uv run --python 3.14.7 --no-project python tests/platforms/packaged.py c --artifacts "${RADROOTS_PACKAGE_ROOT:-$ROOT/build/dist}" ;;
+    test-packaged-cpp) uv run --python 3.14.7 --no-project python tests/platforms/packaged.py cpp --artifacts "${RADROOTS_PACKAGE_ROOT:-$ROOT/build/dist}" ;;
     test-packaged-android) uv run --python 3.14.7 --no-project python tests/platforms/packaged.py android --artifacts "${RADROOTS_PACKAGE_ROOT:-$ROOT/build/dist}" ;;
     package-maven-bundle) package_tool maven-bundle ;;
     test-tooling) uv run --python 3.14.7 --no-project python -m unittest discover -s tests/consumers -p "test_*.py" -v; uv run --python 3.14.7 --no-project python -m unittest discover -s tests/platforms -p test_mobile_helpers.py -v; uv run --python 3.14.7 --no-project python -m unittest discover -s tests/platforms -p test_targets.py -v ;;

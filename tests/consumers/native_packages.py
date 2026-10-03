@@ -535,7 +535,8 @@ def qualify_packages(sdk, c_archive, cpp_archive=None):
                 {"package": prefix, "fixtures": sdk / "bindings"},
             )
             suite.addTests(loader.loadTestsFromTestCase(fixture))
-        if not unittest.TextTestRunner(verbosity=2).run(suite).wasSuccessful():
+        result = unittest.TextTestRunner(verbosity=2).run(suite)
+        if not result.wasSuccessful() or result.skipped or not result.testsRun:
             raise AssertionError("Installed native package qualification failed")
 
 
@@ -551,7 +552,9 @@ def main():
             "test-cpp-package",
         ),
     )
-    command = parser.parse_args().command
+    parser.add_argument("--artifacts", type=Path)
+    arguments = parser.parse_args()
+    command = arguments.command
     if command == "record-build":
         record_build()
     elif command in ("package-c", "package-cpp"):
@@ -560,8 +563,10 @@ def main():
     else:
         qualify_packages(
             SDK,
-            package_path(SDK, "c"),
-            package_path(SDK, "cpp") if command == "test-cpp-package" else None,
+            package_path(SDK, "c", arguments.artifacts),
+            package_path(SDK, "cpp", arguments.artifacts)
+            if command == "test-cpp-package"
+            else None,
         )
 
 

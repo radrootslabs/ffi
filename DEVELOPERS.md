@@ -476,6 +476,13 @@ all regular mode 100644, with exact prepared bytes and source as sole parent.
 Final distribution commit creation and nested module tag publication belong to
 the separately governed release controller.
 
+`make package-cpp` prepares the matching C and C++ archives. Run
+`make test-packaged-c` and `make test-packaged-cpp` through extbuild to verify
+those archives without invoking a producer. Consumers exercise relocated static
+and shared CMake packages, pkg-config, caller sanitizers and C++ with exceptions
+disabled. Rust and generator tools are blocked in installed CMake consumers;
+C-only consumption also blocks C++ compilers. The release lane is macOS arm64.
+
 `tests/platforms/targets.json` owns intended targets, native deployment floors,
 and effective per-language floors. `make update-support` regenerates the
 [target summary](#intended-targets) in this document without private files;
