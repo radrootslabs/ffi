@@ -1,0 +1,16 @@
+if(NOT TARGET Radroots::c_shared)
+    add_library(Radroots::c_shared SHARED IMPORTED)
+    set_target_properties(Radroots::c_shared PROPERTIES
+        IMPORTED_LOCATION "${RADROOTS_LIBRARY_DIR}/@RADROOTS_SHARED_FILE@"
+        INTERFACE_INCLUDE_DIRECTORIES "${RADROOTS_INCLUDE_DIR}"
+        INTERFACE_COMPILE_FEATURES c_std_11)
+    add_library(Radroots::c_static STATIC IMPORTED)
+    set_target_properties(Radroots::c_static PROPERTIES
+        IMPORTED_LOCATION "${RADROOTS_LIBRARY_DIR}/libradroots_c.a"
+        INTERFACE_INCLUDE_DIRECTORIES "${RADROOTS_INCLUDE_DIR}"
+        INTERFACE_COMPILE_FEATURES c_std_11
+        INTERFACE_COMPILE_DEFINITIONS RADROOTS_STATIC
+        INTERFACE_LINK_LIBRARIES "@RADROOTS_NATIVE_LINK_LIBRARIES@")
+    add_library(Radroots::c INTERFACE IMPORTED)
+    set_target_properties(Radroots::c PROPERTIES INTERFACE_LINK_LIBRARIES Radroots::c_shared)
+endif()

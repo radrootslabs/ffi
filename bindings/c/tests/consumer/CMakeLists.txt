@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.24)
+project(RadrootsCConsumer LANGUAGES C)
+find_package(Radroots CONFIG REQUIRED)
+set(RADROOTS_LINKAGE shared CACHE STRING "C linkage")
+add_executable(consumer main.c)
+target_link_libraries(consumer PRIVATE Radroots::c_${RADROOTS_LINKAGE})
+target_compile_options(consumer PRIVATE -Wall -Wextra -Werror)

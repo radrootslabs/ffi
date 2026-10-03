@@ -1,0 +1,14 @@
+[package]
+name = "radroots_ffi_example"
+description = "Minimal Radroots identity API for binding and packaging examples"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+publish = false
+
+[lib]
+path = "src/lib.rs"

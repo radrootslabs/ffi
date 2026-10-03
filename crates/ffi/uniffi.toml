@@ -1,0 +1,15 @@
+[bindings.python]
+cdylib_name = "radroots_ffi"
+
+[bindings.kotlin]
+package_name = "org.radroots.internal"
+cdylib_name = "radroots_ffi"
+
+[bindings.swift]
+module_name = "RadrootsBindings"
+ffi_module_name = "RadrootsNative"
+generate_module_map = true
+
+[bindings.go]
+package_name = "native"
+go_mod = "radroots.org/internal/native"

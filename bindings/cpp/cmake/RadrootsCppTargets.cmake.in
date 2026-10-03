@@ -1,0 +1,12 @@
+if(NOT TARGET Radroots::cpp)
+    add_library(Radroots::cpp INTERFACE IMPORTED)
+    set_target_properties(Radroots::cpp PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "${RADROOTS_CPP_INCLUDE_DIR}"
+        INTERFACE_COMPILE_FEATURES cxx_std_17
+        INTERFACE_LINK_LIBRARIES Radroots::c_shared)
+    add_library(Radroots::cpp_static INTERFACE IMPORTED)
+    set_target_properties(Radroots::cpp_static PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "${RADROOTS_CPP_INCLUDE_DIR}"
+        INTERFACE_COMPILE_FEATURES cxx_std_17
+        INTERFACE_LINK_LIBRARIES Radroots::c_static)
+endif()

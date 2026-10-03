@@ -1,0 +1,6 @@
+@PACKAGE_INIT@
+include(CMakeFindDependencyMacro)
+find_dependency(Radroots @RADROOTS_VERSION@ EXACT CONFIG)
+set_and_check(RADROOTS_CPP_INCLUDE_DIR "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")
+include("${CMAKE_CURRENT_LIST_DIR}/RadrootsCppTargets.cmake")
+check_required_components(RadrootsCpp)

@@ -1,0 +1,11 @@
+prefix=${pcfiledir}/../..
+exec_prefix=${prefix}
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: Radroots
+Description: Radroots C ABI
+Version: @RADROOTS_VERSION@
+Libs: -L${libdir} -lradroots_c
+Libs.private: @RADROOTS_NATIVE_LIBS@
+Cflags: -I${includedir}

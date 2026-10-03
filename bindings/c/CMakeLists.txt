@@ -1,0 +1,70 @@
+cmake_minimum_required(VERSION 3.24)
+project(Radroots VERSION 0.0.0 LANGUAGES C)
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+include(CTest)
+if(NOT IS_DIRECTORY "${RADROOTS_NATIVE_DIR}")
+    message(FATAL_ERROR "RADROOTS_NATIVE_DIR must contain the built C libraries")
+endif()
+if(APPLE)
+    set(RADROOTS_SHARED_FILE libradroots_c.1.dylib)
+elseif(UNIX)
+    set(RADROOTS_SHARED_FILE libradroots_c.so.1)
+else()
+    message(FATAL_ERROR "This native package target is not qualified")
+endif()
+file(READ "${RADROOTS_NATIVE_DIR}/native-static-libs.txt" RADROOTS_NATIVE_LIBS)
+string(STRIP "${RADROOTS_NATIVE_LIBS}" RADROOTS_NATIVE_LIBS)
+separate_arguments(RADROOTS_NATIVE_LINK_LIBRARIES UNIX_COMMAND "${RADROOTS_NATIVE_LIBS}")
+set(RADROOTS_VERSION "${PROJECT_VERSION}" CACHE STRING "SDK version")
+configure_package_config_file(cmake/RadrootsConfig.cmake.in
+    "${CMAKE_CURRENT_BINARY_DIR}/RadrootsConfig.cmake"
+    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Radroots"
+    PATH_VARS CMAKE_INSTALL_LIBDIR CMAKE_INSTALL_INCLUDEDIR)
+configure_file(cmake/RadrootsTargets.cmake.in
+    "${CMAKE_CURRENT_BINARY_DIR}/RadrootsTargets.cmake" @ONLY)
+write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/RadrootsConfigVersion.cmake"
+    VERSION "${RADROOTS_VERSION}" COMPATIBILITY SameMajorVersion)
+configure_file(cmake/radroots.pc.in "${CMAKE_CURRENT_BINARY_DIR}/radroots.pc" @ONLY)
+install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+install(FILES "${RADROOTS_NATIVE_DIR}/libradroots_c.a"
+    "${RADROOTS_NATIVE_DIR}/${RADROOTS_SHARED_FILE}"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+if(APPLE)
+    install(FILES "${RADROOTS_NATIVE_DIR}/libradroots_c.dylib" DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+else()
+    install(FILES "${RADROOTS_NATIVE_DIR}/libradroots_c.so" DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+endif()
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/RadrootsConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/RadrootsTargets.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/RadrootsConfigVersion.cmake"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Radroots")
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/radroots.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+install(FILES LICENSE-MIT LICENSE-APACHE DESTINATION "${CMAKE_INSTALL_DATADIR}/radroots-c")
+file(READ README.md RADROOTS_README)
+string(REPLACE "../../DEVELOPERS.md" "DEVELOPERS.md" RADROOTS_README "${RADROOTS_README}")
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/README.md" "${RADROOTS_README}")
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/README.md" ../../DEVELOPERS.md
+    DESTINATION "${CMAKE_INSTALL_DATADIR}/radroots-c")
+if(BUILD_TESTING)
+    find_package(Threads REQUIRED)
+    foreach(linkage IN ITEMS shared static)
+        string(TOUPPER "${linkage}" linkage_type)
+        add_library(native_${linkage} ${linkage_type} IMPORTED)
+        if(linkage STREQUAL "shared")
+            set_target_properties(native_${linkage} PROPERTIES IMPORTED_LOCATION "${RADROOTS_NATIVE_DIR}/${RADROOTS_SHARED_FILE}")
+        else()
+            set_target_properties(native_${linkage} PROPERTIES IMPORTED_LOCATION "${RADROOTS_NATIVE_DIR}/libradroots_c.a"
+                INTERFACE_COMPILE_DEFINITIONS RADROOTS_STATIC
+                INTERFACE_LINK_LIBRARIES "${RADROOTS_NATIVE_LINK_LIBRARIES}")
+        endif()
+        foreach(fixture IN ITEMS api layout print_name)
+            add_executable(c_${fixture}_${linkage} "tests/${fixture}.c")
+            target_compile_features(c_${fixture}_${linkage} PRIVATE c_std_11)
+            target_compile_options(c_${fixture}_${linkage} PRIVATE -Wall -Wextra -Werror -UNDEBUG)
+            target_include_directories(c_${fixture}_${linkage} PRIVATE include)
+            target_link_libraries(c_${fixture}_${linkage} PRIVATE native_${linkage} Threads::Threads)
+            add_test(NAME c_${fixture}_${linkage} COMMAND c_${fixture}_${linkage})
+        endforeach()
+    endforeach()
+endif()

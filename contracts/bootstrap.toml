@@ -1,0 +1,16 @@
+schema_version = 1
+repository = "https://github.com/radrootslabs/ffi"
+homepage = "https://radroots.org"
+version = "0.0.0"
+publication = "unpublished"
+core_package = "radroots_ffi_example"
+core_path = "crates/example"
+adapter_dependency_alias = "radroots"
+canonical_core_repository = "https://github.com/radrootslabs/lib"
+canonical_core_integration = "deferred"
+name = "Radroots"
+native_stdout = "Radroots\n"
+browser_print = "console.log(name()) after initialize()"
+rust_toolchain = "1.97.1"
+c_abi_version = 65536
+languages = ["c", "cpp", "go", "kotlin", "python", "swift", "typescript"]
