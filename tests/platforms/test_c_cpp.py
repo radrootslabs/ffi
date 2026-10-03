@@ -15,6 +15,7 @@ SDK = Path(__file__).resolve().parents[2]
 class NativeCommands:
     package = SDK / "build/native/install"
     native_build = SDK / "build/native"
+    cmake_build = Path(os.environ["CMAKE_BUILD_DIR"])
     fixtures = SDK / "bindings"
 
     def run_command(self, command, cwd=None, env=None):
@@ -104,11 +105,11 @@ class NativeAbi(NativeCommands, unittest.TestCase):
         baseline = json.loads((self.fixtures / "c/tests/abi_v1.json").read_text())
         for linkage in ("static", "shared"):
             result = self.run_command(
-                [str(self.native_build / "c" / f"c_layout_{linkage}")]
+                [str(self.cmake_build / "c" / f"c_layout_{linkage}")]
             )
             actual = json.loads(result.stdout)
             self.assertEqual(actual, baseline["layouts"][str(actual["pointer_bits"])])
-            self.exact_print(self.native_build / "c" / f"c_print_name_{linkage}")
+            self.exact_print(self.cmake_build / "c" / f"c_print_name_{linkage}")
 
     def test_symbols_and_loader_identity(self):
         baseline = json.loads((self.fixtures / "c/tests/abi_v1.json").read_text())

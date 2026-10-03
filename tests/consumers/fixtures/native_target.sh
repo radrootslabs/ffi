@@ -23,6 +23,7 @@ cargo() {
             printf '{"packages":[{"name":"radroots_c","version":"0.0.0"}]}\n'
             ;;
         rustc)
+            printf '%s' "${CARGO_ENCODED_RUSTFLAGS-}" > "$ROOT/selected-flags"
             target=${CARGO_BUILD_TARGET:-$HOST}
             while [[ $# -gt 0 ]]; do
                 if [[ "$1" == --target ]]; then
@@ -42,6 +43,9 @@ cargo() {
     esac
 }
 
+# shellcheck source=tools/radroots_ffi/rust.sh
+source "$(dirname "$NATIVE_SOURCE")/rust.sh"
+prepare_rust_flags
 # shellcheck source=tools/radroots_ffi/native.sh
 source "$NATIVE_SOURCE"
 doctor_c() { :; }

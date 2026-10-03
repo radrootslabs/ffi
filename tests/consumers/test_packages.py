@@ -21,7 +21,9 @@ class GoDistributionTests(unittest.TestCase):
         (self.sdk / "rust-toolchain.toml").write_text(
             '[toolchain]\nchannel = "1.97.1"\n'
         )
-        (self.module / "go.mod").write_text("module github.com/radrootslabs/ffi/bindings/go\n\ngo 1.27.1\n")
+        (self.module / "go.mod").write_text(
+            "module github.com/radrootslabs/ffi/bindings/go\n\ngo 1.27.1\n"
+        )
         self.generator = {
             "version": "test",
             "revision": "b" * 40,

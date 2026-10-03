@@ -67,7 +67,7 @@ setup_rust() {
 setup_python() {
     doctor_python
     mkdir -p build
-    UV_PROJECT_ENVIRONMENT=build/python uv sync --locked --only-group build --no-install-project --python "$(uv python find --system 3.14.7)" --no-python-downloads
+    uv sync --locked --only-group build --only-group checks --no-install-project --python "$(uv python find --system 3.14.7)" --no-python-downloads
 }
 setup_typescript() {
     doctor_typescript
@@ -173,10 +173,10 @@ build_go_platform() {
     case "$platform" in
         darwin_*) cargo build --locked --release -p radroots_ffi --target "$target" ;;
         linux_*)
-            if [[ "$platform" == "$(go env GOHOSTOS)_$(go env GOHOSTARCH)" && ! -x build/python/bin/cargo-zigbuild ]]; then
+            if [[ "$platform" == "$(go env GOHOSTOS)_$(go env GOHOSTARCH)" && ! -x "${UV_PROJECT_ENVIRONMENT:?}/bin/cargo-zigbuild" ]]; then
                 cargo build --locked --release -p radroots_ffi --target "$target"
             else
-                build/python/bin/cargo-zigbuild build --locked --release -p radroots_ffi --target "$target.2.17"
+                "${UV_PROJECT_ENVIRONMENT:?}/bin/cargo-zigbuild" build --locked --release -p radroots_ffi --target "$target.2.17"
             fi ;;
         *) die 'Unsupported Go platform' ;;
     esac
@@ -190,7 +190,7 @@ build_go_all() {
 build_python() {
     doctor_python
     generate_python
-    build/python/bin/maturin build --locked --release --interpreter "$(uv python find --system 3.14.7)" --out build/dist/python
+    "${UV_PROJECT_ENVIRONMENT:?}/bin/maturin" build --locked --release --interpreter "$(uv python find --system 3.14.7)" --out build/dist/python
 }
 build_node() {
     doctor_typescript
@@ -287,7 +287,7 @@ build_linux_native() {
     require zig
     local target arch
     for target in aarch64-unknown-linux-gnu x86_64-unknown-linux-gnu; do
-        build/python/bin/cargo-zigbuild build --locked --release -p radroots_ffi -p radroots_node --target "$target.2.17"
+        "${UV_PROJECT_ENVIRONMENT:?}/bin/cargo-zigbuild" build --locked --release -p radroots_ffi -p radroots_node --target "$target.2.17"
         case "$target" in aarch64-*) arch=arm64 ;; x86_64-*) arch=x64 ;; esac
         cp "$(target_dir)/$target/release/libradroots_node.so" "bindings/typescript/native/radroots.linux-$arch-gnu.node"
         mkdir -p "build/linux/$target"
@@ -303,7 +303,7 @@ build_linux() {
     build_linux_native
     local target
     for target in aarch64-unknown-linux-gnu x86_64-unknown-linux-gnu; do
-        PATH="$ROOT/build/python/bin:$PATH" build/python/bin/maturin build --locked --release --zig --target "$target" --compatibility manylinux2014 --interpreter "$(uv python find --system 3.14.7)" --out build/dist/python
+        PATH="${UV_PROJECT_ENVIRONMENT:?}/bin:$PATH" "${UV_PROJECT_ENVIRONMENT:?}/bin/maturin" build --locked --release --zig --target "$target" --compatibility manylinux2014 --interpreter "$(uv python find --system 3.14.7)" --out build/dist/python
     done
 }
 test_linux() {
@@ -353,7 +353,7 @@ build_android() {
             armv7-*) abi=armeabi-v7a ;;
             x86_64-*) abi=x86_64 ;;
         esac
-        RUSTFLAGS="-C link-arg=-Wl,-z,max-page-size=$alignment" cargo build --locked --release -p radroots_ffi --target "$target"
+        CARGO_ENCODED_RUSTFLAGS=$(rust_flags "-C" "link-arg=-Wl,-z,max-page-size=$alignment") cargo build --locked --release -p radroots_ffi --target "$target"
         mkdir -p "build/android/jni/$abi"
         cp "$(target_dir)/$target/release/libradroots_ffi.so" "build/android/jni/$abi/"
         "$ndk/llvm-readelf" -l "build/android/jni/$abi/libradroots_ffi.so" > "build/android/$abi-elf.txt"
@@ -444,9 +444,10 @@ test_rust() {
 }
 test_python() {
     build_python
-    uv venv --python "$(uv python find --system 3.14.7)" --no-python-downloads --clear build/consumers/python
-    uv pip install --no-cache --python build/consumers/python/bin/python --no-deps --no-index --find-links build/dist/python radroots==0.0.0
-    build/consumers/python/bin/python -I -m unittest discover -s bindings/python/tests -v
+    local consumer="$EXT_BUILD_PROJECT_DIR/target/python/consumers/python"
+    uv venv --python "$(uv python find --system 3.14.7)" --no-python-downloads --clear "$consumer"
+    uv pip install --no-cache --python "$consumer/bin/python" --no-deps --no-index --find-links build/dist/python radroots==0.0.0
+    "$consumer/bin/python" -I -m unittest discover -s bindings/python/tests -v
     test_python_types
 }
 compile_typescript_tests() {
@@ -580,6 +581,13 @@ help() {
       '  make generate-python | generate-kotlin | generate-swift | generate-go' \
       '  make test-python | test-node | test-wasm | test-kotlin | test-go | test-swift'
 }
+# shellcheck source=tools/radroots_ffi/rust.sh
+source "$ROOT/tools/radroots_ffi/rust.sh"
+if [[ ${1:-help} != help ]]; then
+    [[ -n ${UV_PROJECT_ENVIRONMENT:-} && -n ${EXT_BUILD_PROJECT_DIR:-} ]] || die "extbuild output environment is required"
+    export npm_config_cache="$EXT_BUILD_PROJECT_DIR/caches/npm"
+    prepare_rust_flags
+fi
 # shellcheck source=tools/radroots_ffi/checks.sh
 source "$ROOT/tools/radroots_ffi/checks.sh"
 # shellcheck source=tools/radroots_ffi/native.sh

@@ -13,7 +13,7 @@ inputs = [
   "crates/node/src/lib.rs", "crates/wasm/src/lib.rs",
   "bindings/typescript/package.json", "bindings/typescript/tsconfig.json",
   "bindings/typescript/src/index.ts", "bindings/typescript/src/browser.ts",
-  "tools/radroots_ffi/make.sh", "tools/radroots_ffi/native.sh",
+  "tools/radroots_ffi/rust.sh", "tools/radroots_ffi/make.sh", "tools/radroots_ffi/native.sh",
   "tools/radroots_ffi/checks.sh", "tools/radroots_ffi/swift.sh",
   "tools/radroots_ffi/packages.sh", "tools/radroots_ffi/support.sh",
   "tools/radroots_ffi/generation.py",

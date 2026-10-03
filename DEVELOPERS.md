@@ -150,6 +150,11 @@ the example core has its own identity test.
 Requires Python 3.14.7 and uv, in addition to the shared Rust prerequisites.
 Setup creates the build environment and installs the pinned maturin and
 cross-build helpers.
+Build/check tools share extbuild's external `UV_PROJECT_ENVIRONMENT`; setup
+synchronizes both locked groups without replacing that routing. Formatter and
+type-checker caches also use extbuild paths. Run `cargo extbuild doctor` before
+the first mutating command in a session and route commands through
+`cargo extbuild run -- make <target>`.
 
 ```sh
 make setup-checks
@@ -177,6 +182,9 @@ Setup installs locked npm dependencies, pinned wasm-pack and the Rust WASM targe
 Build tools are locked in the private root `package.json`/`package-lock.json`.
 The published facade manifest has no build-tool dependencies; setup installs
 from the root and does not resolve unpublished Radroots native packages.
+The tooling package pins npm `10.9.8`. The capsule launcher places npm's cache
+under extbuild's project directory. extbuild currently reports its pnpm-specific
+Node integration as unavailable for npm; commands still run through its router.
 
 ```sh
 make setup-typescript

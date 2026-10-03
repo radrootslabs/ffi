@@ -1,3 +1,4 @@
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -7,14 +8,14 @@ SDK = Path(__file__).resolve().parents[2]
 
 def check(python):
     python = Path(python).absolute()
-    mypy = SDK / "build/checks/bin/mypy"
+    mypy = Path(os.environ["UV_PROJECT_ENVIRONMENT"]) / "bin/mypy"
     command = [
         str(mypy),
         "--python-executable",
         str(python),
         "--no-incremental",
         "--cache-dir",
-        str(SDK / "build/mypy"),
+        os.environ["EXT_BUILD_MYPY_CACHE_DIR"],
     ]
     fixtures = SDK / "bindings/python/tests/types"
     subprocess.run([*command, str(fixtures / "valid.py")], cwd=SDK, check=True)

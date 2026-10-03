@@ -46,7 +46,7 @@ build_c() {
     local artifacts version host
     host=$(rustc -vV | sed -n 's/^host: //p')
     [[ -n "$host" ]] || die 'Rust did not report its host target'
-    CARGO_PROFILE_C_RELEASE_PANIC=unwind CARGO_ENCODED_RUSTFLAGS='-Crelocation-model=pic' cargo rustc --locked --target "$host" --profile c-release -p radroots_c --lib -- --print native-static-libs > build/native/build.log 2>&1 || { cat build/native/build.log >&2; return 1; }
+    CARGO_PROFILE_C_RELEASE_PANIC=unwind CARGO_ENCODED_RUSTFLAGS=$(rust_flags "-C" "relocation-model=pic") cargo rustc --locked --target "$host" --profile c-release -p radroots_c --lib -- --print native-static-libs > build/native/build.log 2>&1 || { cat build/native/build.log >&2; return 1; }
     cat build/native/build.log
     sed -n 's/^note: native-static-libs: //p' build/native/build.log | tail -1 > build/native/stage/native-static-libs.txt
     [[ -s build/native/stage/native-static-libs.txt ]] || die 'Rust did not report the native static dependencies'
@@ -63,17 +63,17 @@ build_c() {
             ;;
     esac
     version=$(cargo metadata --locked --no-deps --format-version 1 | jq -r '.packages[] | select(.name == "radroots_c") | .version')
-    cmake -S bindings/c -B build/native/c -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_LIBDIR=lib -DRADROOTS_NATIVE_DIR="$ROOT/build/native/stage" -DRADROOTS_VERSION="$version" -DCMAKE_INSTALL_PREFIX="$ROOT/build/native/install"
-    cmake --build build/native/c --parallel
+    cmake -S bindings/c -B "${CMAKE_BUILD_DIR:?}/c" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_LIBDIR=lib -DRADROOTS_NATIVE_DIR="$ROOT/build/native/stage" -DRADROOTS_VERSION="$version" -DCMAKE_INSTALL_PREFIX="$ROOT/build/native/install"
+    cmake --build "${CMAKE_BUILD_DIR:?}/c" --parallel
     uv run --python 3.14.7 --no-project python tests/consumers/native_packages.py record-build
 }
-install_c() { build_c; cmake --install build/native/c; }
+install_c() { build_c; cmake --install "${CMAKE_BUILD_DIR:?}/c"; }
 test_c_abi() {
     build_c
     uv run --python 3.14.7 --no-project python -m unittest discover -s tests/platforms -p test_c_cpp.py -k NativeAbi -v
 }
-test_c_static() { build_c; ctest --test-dir build/native/c --output-on-failure -R '_static$'; }
-test_c_shared() { build_c; ctest --test-dir build/native/c --output-on-failure -R '_shared$'; }
+test_c_static() { build_c; ctest --test-dir "${CMAKE_BUILD_DIR:?}/c" --output-on-failure -R '_static$'; }
+test_c_shared() { build_c; ctest --test-dir "${CMAKE_BUILD_DIR:?}/c" --output-on-failure -R '_shared$'; }
 test_c_consumer() {
     install_c
     uv run --python 3.14.7 --no-project python -m unittest discover -s tests/platforms -p test_c_cpp.py -k CConsumers -v
@@ -81,7 +81,7 @@ test_c_consumer() {
 test_c() {
     cargo test --locked -p radroots_c
     install_c
-    ctest --test-dir build/native/c --output-on-failure
+    ctest --test-dir "${CMAKE_BUILD_DIR:?}/c" --output-on-failure
     uv run --python 3.14.7 --no-project python -m unittest discover -s tests/platforms -p test_c_cpp.py -k NativeAbi -v
     uv run --python 3.14.7 --no-project python -m unittest discover -s tests/platforms -p test_c_cpp.py -k CConsumers -v
 }
@@ -90,18 +90,18 @@ build_cpp() {
     install_c
     local version
     version=$(cargo metadata --locked --no-deps --format-version 1 | jq -r '.packages[] | select(.name == "radroots_c") | .version')
-    cmake -S bindings/cpp -B build/native/cpp -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_PREFIX_PATH="$ROOT/build/native/install" -DCMAKE_INSTALL_PREFIX="$ROOT/build/native/install" -DRADROOTS_VERSION="$version"
-    cmake --build build/native/cpp --parallel
-    cmake --install build/native/cpp
+    cmake -S bindings/cpp -B "${CMAKE_BUILD_DIR:?}/cpp" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_PREFIX_PATH="$ROOT/build/native/install" -DCMAKE_INSTALL_PREFIX="$ROOT/build/native/install" -DRADROOTS_VERSION="$version"
+    cmake --build "${CMAKE_BUILD_DIR:?}/cpp" --parallel
+    cmake --install "${CMAKE_BUILD_DIR:?}/cpp"
 }
-test_cpp_no_exceptions() { build_cpp; ctest --test-dir build/native/cpp --output-on-failure -R no_exceptions; }
+test_cpp_no_exceptions() { build_cpp; ctest --test-dir "${CMAKE_BUILD_DIR:?}/cpp" --output-on-failure -R no_exceptions; }
 test_cpp_consumer() {
     build_cpp
     uv run --python 3.14.7 --no-project python -m unittest discover -s tests/platforms -p test_c_cpp.py -k CppConsumers -v
 }
 test_cpp() {
     build_cpp
-    ctest --test-dir build/native/cpp --output-on-failure
+    ctest --test-dir "${CMAKE_BUILD_DIR:?}/cpp" --output-on-failure
     uv run --python 3.14.7 --no-project python -m unittest discover -s tests/platforms -p test_c_cpp.py -k CppConsumers -v
 }
 package_c() {

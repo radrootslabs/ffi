@@ -2,7 +2,7 @@
 
 setup_checks() {
     require uv; require curl
-    UV_PROJECT_ENVIRONMENT=build/checks uv sync --locked --only-group checks --no-install-project --python 3.14.7
+    uv sync --locked --only-group checks --only-group build --no-install-project --python 3.14.7
     mkdir -p build/tools
     local jar=build/tools/ktfmt-0.58.jar
     if [[ ! -f "$jar" ]] || ! verify_ktfmt >/dev/null 2>&1; then
@@ -14,7 +14,7 @@ verify_ktfmt() {
     [[ $(shasum -a 256 build/tools/ktfmt-0.58.jar | cut -d ' ' -f 1) == 0369a4351367b0de2374b0f1c3962ef7d5d222a4bc58d7197d06948d46e4bea5 ]]
 }
 check_tools() {
-    [[ -x build/checks/bin/ruff && -x build/checks/bin/mypy && -x build/checks/bin/clang-format ]] || die 'Run make setup-checks first'
+    [[ -x "${UV_PROJECT_ENVIRONMENT:?}/bin/ruff" && -x "${UV_PROJECT_ENVIRONMENT:?}/bin/mypy" && -x "${UV_PROJECT_ENVIRONMENT:?}/bin/clang-format" ]] || die 'Run make setup-checks first'
 }
 python_files() {
     find bindings/python tests tools/radroots_ffi -type d \( -name build -o -name __pycache__ -o -name .gradle -o -name .kotlin \) -prune -o -type f \( -name '*.py' -o -name '*.pyi' \) ! -name radroots_ffi.py -print
@@ -23,19 +23,19 @@ format_python() {
     check_tools
     local files=() file
     while IFS= read -r file; do files+=("$file"); done < <(python_files)
-    build/checks/bin/ruff check --cache-dir build/ruff --fix "${files[@]}"
-    build/checks/bin/ruff format --cache-dir build/ruff "${files[@]}"
+    "${UV_PROJECT_ENVIRONMENT:?}/bin/ruff" check --cache-dir "${EXT_BUILD_RUFF_CACHE_DIR:?}" --fix "${files[@]}"
+    "${UV_PROJECT_ENVIRONMENT:?}/bin/ruff" format --cache-dir "${EXT_BUILD_RUFF_CACHE_DIR:?}" "${files[@]}"
 }
 check_python() {
     check_tools
     local files=() file
     while IFS= read -r file; do files+=("$file"); done < <(python_files)
-    build/checks/bin/ruff check --cache-dir build/ruff "${files[@]}"
-    build/checks/bin/ruff format --cache-dir build/ruff --check "${files[@]}"
+    "${UV_PROJECT_ENVIRONMENT:?}/bin/ruff" check --cache-dir "${EXT_BUILD_RUFF_CACHE_DIR:?}" "${files[@]}"
+    "${UV_PROJECT_ENVIRONMENT:?}/bin/ruff" format --cache-dir "${EXT_BUILD_RUFF_CACHE_DIR:?}" --check "${files[@]}"
 }
 test_python_types() {
     check_tools
-    uv run --python 3.14.7 --no-project python tests/consumers/python_types.py build/consumers/python/bin/python
+    uv run --python 3.14.7 --no-project python tests/consumers/python_types.py "$EXT_BUILD_PROJECT_DIR/target/python/consumers/python/bin/python"
 }
 typescript_format() {
     doctor_typescript
@@ -77,7 +77,7 @@ native_format() {
     local files=() file
     while IFS= read -r file; do files+=("$file"); done < <(find "bindings/$1" -type f \( -name '*.h' -o -name '*.hpp' -o -name '*.c' -o -name '*.cpp' \) ! -name radroots.h)
     shift
-    build/checks/bin/clang-format "$@" "${files[@]}"
+    "${UV_PROJECT_ENVIRONMENT:?}/bin/clang-format" "$@" "${files[@]}"
 }
 format_c() { native_format c -i; }
 format_cpp() { native_format cpp -i; }

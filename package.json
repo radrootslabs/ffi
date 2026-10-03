@@ -11,5 +11,6 @@
     "@types/node": "22.19.15",
     "playwright": "1.63.0",
     "prettier": "3.6.2"
-  }
+  },
+  "packageManager": "npm@10.9.8"
 }

@@ -56,6 +56,7 @@ def source_inputs(sdk):
         "DEVELOPERS.md",
         "tools/radroots_ffi/make.sh",
         "tools/radroots_ffi/native.sh",
+        "tools/radroots_ffi/rust.sh",
         "tests/consumers/native_packages.py",
         "tests/consumers/package_tools.py",
     }
