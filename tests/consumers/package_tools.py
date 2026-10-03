@@ -153,9 +153,9 @@ def package_go(sdk, destination, prefix):
 
 
 def write_go_proxy(files, root, release):
-    proxy = root / "radroots.org/@v"
+    proxy = root / "github.com/radrootslabs/ffi/bindings/go/@v"
     proxy.mkdir(parents=True, exist_ok=True)
-    write_zip(files, proxy / f"v{release}.zip", f"radroots.org@v{release}")
+    write_zip(files, proxy / f"v{release}.zip", f"github.com/radrootslabs/ffi/bindings/go@v{release}")
     shutil.copyfile(files["go.mod"], proxy / f"v{release}.mod")
     (proxy / f"v{release}.info").write_text(
         json.dumps({"Version": f"v{release}", "Time": "2026-01-01T00:00:00Z"}) + "\n"
@@ -212,7 +212,7 @@ def test_go_consumer(sdk=SDK, artifacts=None):
             "GOPRIVATE": "",
             "GOMODCACHE": str(root / "cache"),
         }
-        run(["go", "mod", "download", "radroots.org"], cwd=consumer, env=env)
+        run(["go", "mod", "download", "github.com/radrootslabs/ffi/bindings/go"], cwd=consumer, env=env)
         run(["go", "test", "-race", "-count=1", "-v", "./..."], cwd=consumer, env=env)
     run(
         [

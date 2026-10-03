@@ -1,6 +1,6 @@
 package main
 
-import "radroots.org"
+import "github.com/radrootslabs/ffi/bindings/go"
 
 func main() {
 	radroots.PrintName()

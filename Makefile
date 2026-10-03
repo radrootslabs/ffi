@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := help
-.PHONY: check-bootstrap
-check-bootstrap:
-	@bash tools/radroots_ffi/make.sh check-bootstrap
+.PHONY: check-bootstrap check-api
+check-bootstrap check-api:
+	@bash tools/radroots_ffi/make.sh $@
 .PHONY: package-c package-cpp test-c-package test-cpp-package package-python package-swift test-swift-consumer build-kotlin-all
 package-c package-cpp test-c-package test-cpp-package package-python package-swift test-swift-consumer build-kotlin-all:
 	@bash tools/radroots_ffi/make.sh $@

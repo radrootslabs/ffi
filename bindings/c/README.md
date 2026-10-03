@@ -1,9 +1,9 @@
-# Radroots C SDK
+# Radroots C FFI library
 
 Version 0.0.0 is unpublished. From the repository root, use `make test-c`
 for local verification. Registry installation examples describe intended distributions.
 
-C SDK for Radroots.
+C FFI library for Radroots.
 Build and install locally with `make install-c`; use
 `find_package(Radroots CONFIG REQUIRED)` and `Radroots::c_shared` or
 `Radroots::c_static`. `Radroots::c` selects shared linkage.

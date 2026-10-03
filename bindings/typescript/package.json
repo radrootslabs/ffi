@@ -1,7 +1,7 @@
 {
   "name": "radroots",
   "version": "0.0.0",
-  "description": "TypeScript SDK for Radroots.",
+  "description": "TypeScript FFI library for Radroots.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

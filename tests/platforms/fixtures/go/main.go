@@ -3,7 +3,7 @@ package main
 import (
 	"sync"
 
-	"radroots.org"
+	"github.com/radrootslabs/ffi/bindings/go"
 )
 
 func main() {

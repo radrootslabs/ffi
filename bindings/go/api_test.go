@@ -5,7 +5,7 @@ import (
 	"sync"
 	"testing"
 
-	"radroots.org"
+	"github.com/radrootslabs/ffi/bindings/go"
 )
 
 func TestIdentity(t *testing.T) {

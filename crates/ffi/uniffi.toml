@@ -12,4 +12,4 @@ generate_module_map = true
 
 [bindings.go]
 package_name = "native"
-go_mod = "radroots.org/internal/native"
+go_mod = "github.com/radrootslabs/ffi/bindings/go/internal/native"

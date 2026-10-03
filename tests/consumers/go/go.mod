@@ -2,4 +2,4 @@ module example.invalid/radroots_consumer
 
 go 1.27.1
 
-require radroots.org v0.0.0
+require github.com/radrootslabs/ffi/bindings/go v0.0.0

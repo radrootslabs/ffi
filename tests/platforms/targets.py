@@ -51,7 +51,7 @@ def load(root):
 def table(root):
     data = load(root)
     rows = [
-        "| SDK | Runtime test targets | Build/link targets | Planned |",
+        "| FFI library | Runtime test targets | Build/link targets | Planned |",
         "| --- | --- | --- | --- |",
     ]
     for name, language in data["languages"].items():

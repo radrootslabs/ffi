@@ -1,6 +1,6 @@
 package radroots
 
-import native "radroots.org/internal/native"
+import native "github.com/radrootslabs/ffi/bindings/go/internal/native"
 
 const Name = "Radroots"
 

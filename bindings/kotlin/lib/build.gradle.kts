@@ -13,7 +13,7 @@ version = rootProject.version
 
 base { archivesName.set("radroots") }
 
-description = "Kotlin SDK for Radroots."
+description = "Kotlin FFI library for Radroots."
 
 repositories { mavenCentral() }
 

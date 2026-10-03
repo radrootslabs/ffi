@@ -1,6 +1,6 @@
 # Developers
 
-Radroots SDKs expose the identity example in `crates/example`
+Radroots FFI libraries expose the identity example in `crates/example`
 through UniFFI, napi-rs, wasm-bindgen and a separately versioned C ABI.
 The implemented operations return and print the project name. No engine objects,
 queries, callbacks or async runtime are exposed yet.
@@ -47,20 +47,19 @@ The bootstrap uses the unpublished `radroots_ffi_example` package through the
 integration must use a full public Git revision; it is not part of this bootstrap.
 Local package receipts bind the example source with a SHA-256 identity. Rust
 uses edition 2024 and resolver 3. The workspace version in `Cargo.toml` owns the
-SDK version; language package versions must agree. Core and FFI repositories
+FFI library version; language package versions must agree. Core and FFI repositories
 retain separate histories. Preserve the [package identities](#package-identities);
-Go uses `radroots.org` for v0/v1 and major-version suffixes from v2, with a
-planned distribution mirror. Public Go discovery at `radroots.org` is not
-configured by this bootstrap; local consumers use the package test proxy.
+Go uses `github.com/radrootslabs/ffi/bindings/go`; local consumers use
+the package test proxy before publication.
 
 ## Package identities
 
 | Language | Installation or import |
 | --- | --- |
-| Rust | `cargo add radroots` |
+| Rust | Unpublished local example/adapters; no Rust package in this release |
 | TypeScript | `npm install radroots` |
 | Python | `uv add radroots` |
-| Go | `go get radroots.org` |
+| Go | `go get github.com/radrootslabs/ffi/bindings/go` |
 | Swift | `import Radroots` |
 | Kotlin / Java | `implementation("org.radroots:radroots:<version>")` |
 | C | `#include <radroots/radroots.h>` |
@@ -82,7 +81,7 @@ are `make generate-python`, `make generate-kotlin`, `make generate-swift` and
 `make check-generated` compares fresh output byte for byte without rewriting
 source. It needs the pinned generators, jq, Node and wasm-pack, but does not need
 Swift or Java compilers. Preserve upstream generator comments and required
-compiler directives. Handwritten SDK source has no comments or docstrings;
+compiler directives. Handwritten FFI source has no comments or docstrings;
 keep explanations in Markdown documentation.
 
 ## Testing and validation
@@ -240,7 +239,7 @@ make test-kotlin
 ```
 
 The build regenerates Kotlin bindings and packages the host native library with
-the JVM SDK. JUnit tests run against the public facade; the subprocess helper
+the JVM FFI library. JUnit tests run against the public facade; the subprocess helper
 lives in the test source set and is excluded from the library JAR.
 Java uses the same facade: `Radroots.NAME`, `Radroots.name()` and
 `Radroots.printName()`. JNA is an implementation dependency retained in runtime
@@ -250,7 +249,7 @@ visibility. Java 8 bytecode is distinct from Java 8 runtime qualification.
 Installed-consumer tests exercise plain Java, Kotlin, native extraction and
 loading failures.
 
-Android additionally requires NDK r30 and SDK platform 36 in the standard SDK
+Android additionally requires NDK r30 and SDK platform 36 in the standard Android SDK
 installation. To prepare Rust targets and build the Android package:
 
 ```sh
@@ -288,7 +287,7 @@ make test-go
 
 The build regenerates bindings and compiles the host native library and Go
 package. Tests use the external `radroots_test` package and only the public API.
-The generator uses Cargo's debug profile to keep setup fast; native SDK libraries
+The generator uses Cargo's debug profile to keep setup fast; native FFI libraries
 use release builds. `make check-go-generator` verifies the generator pin.
 
 ### Swift
@@ -350,7 +349,7 @@ make package-cpp
 `Radroots::c_static` or the shared-default `Radroots::c`. The C package config
 works in a C-only project. pkg-config consumers use `radroots`; static linkage
 requires `pkg-config --static`. Native system libraries are captured from the
-actual Rust build. The installed prefix relocates without SDK source or Rust.
+actual Rust build. The installed prefix relocates without FFI library source or Rust.
 
 C++ consumers use `find_package(RadrootsCpp CONFIG REQUIRED)` and
 `Radroots::cpp` or `Radroots::cpp_static`. The facade is a header, with C++17
@@ -410,9 +409,9 @@ Registry publication and signing remain external.
 `test-go-consumer` and `test-swift-consumer` use isolated installed packages.
 Python wheel and C/C++ installed-prefix checks are part of their normal tests.
 TypeScript consumers first install their locked test tools with `npm ci`, which
-requires registry access on a fresh cache. They then install the local SDK
-tarballs offline; an unpublished SDK version can be tested without registry
-access for any SDK package. The consumer harness uses a separate fresh cache.
+requires registry access on a fresh cache. They then install the local FFI library
+tarballs offline; an unpublished FFI library version can be tested without registry
+access for any FFI library package. The consumer harness uses a separate fresh cache.
 Go packages contain every declared static archive and validate receipts for the
 example core's content hash, generator revision/binary, compiler and source inputs
 before ZIP creation. A future canonical-core integration would use an immutable
@@ -436,7 +435,7 @@ The JVM artifact targets Java 8 bytecode; builds use Java 21. Baselines do not
 imply testing on every historical OS version.
 
 <!-- support:start -->
-| SDK | Runtime test targets | Build/link targets | Planned |
+| FFI library | Runtime test targets | Build/link targets | Planned |
 | --- | --- | --- | --- |
 | python | macos-arm64, linux-arm64, linux-x64 | None | macos-x64, windows-x64 |
 | typescript | macos-arm64, macos-x64, linux-arm64, linux-x64, browser | None | windows-x64 |

@@ -1,6 +1,6 @@
-# Radroots Swift SDK
+# Radroots Swift FFI library
 
-Swift SDK for Radroots. Version 0.0.0 is not published.
+Swift FFI library for Radroots. Version 0.0.0 is not published.
 
 From the repository root, run `make build-swift` to build the local XCFramework
 and staged development package. Run `make test-swift` for the Swift API tests or

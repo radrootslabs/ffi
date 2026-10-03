@@ -10,7 +10,7 @@ TypeScript (Node.js and browser WebAssembly).
 The small Rust implementation lives in `crates/example`, named
 `radroots_ffi_example` and imported by adapters as `radroots`. It does not replace
 the canonical Rust SDK in [radrootslabs/lib](https://github.com/radrootslabs/lib).
-Connecting that SDK at an immutable public revision is a separate step.
+Connecting that FFI library at an immutable public revision is a separate step.
 
 | Directory | Purpose |
 | --- | --- |
@@ -33,7 +33,7 @@ make check-rust
 Swift's root manifest consumes a locally built XCFramework;
 run `make build-swift` first. Package names and remote-install examples in the
 language READMEs describe intended distributions, not currently published
-packages. Local package tests work without publishing the SDK.
+packages. Local package tests work without publishing the FFI library.
 
 The API prints to native stdout, or browser `console.log` after explicit WASM
 initialization. See each language README for usage.

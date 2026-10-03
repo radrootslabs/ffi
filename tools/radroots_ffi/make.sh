@@ -547,11 +547,11 @@ help() {
     printf '%s\n' 'make test-go-platforms: build and test the complete Go platform matrix'
     printf '%s\n' 'Per-language commands: make setup-<language>, make doctor-<language>' 'Languages: rust, python, typescript, kotlin, go, swift'
     printf '%s\n' 'make test-rust' 'make setup-browser' 'make test-browser' 'make test-ios' 'make test-android' 'make test-swift-platforms'
-    printf '%s\n' 'Radroots SDK developer commands' '' \
+    printf '%s\n' 'Radroots FFI developer commands' '' \
       '  make doctor             Check installed toolchains' \
       '  make setup              Prepare pinned build dependencies' \
       '  make generate           Generate all UniFFI bindings' \
-      '  make build              Build all SDKs for this host' \
+      '  make build              Build all FFI libraries for this host' \
       '  make build-rust         Build the Rust FFI library and generator' \
       '  make build-python       Build native Python wheels' \
       '  make build-typescript   Build Node, browser WASM and TypeScript' \
@@ -593,6 +593,7 @@ source "$ROOT/tools/radroots_ffi/support.sh"
 [[ $# == 1 ]] || die 'Expected exactly one fixed command; run make help'
 case "$1" in
     check-bootstrap) uv run --python 3.14.7 --no-project python tools/radroots_ffi/bootstrap.py ;;
+    check-api) uv run --python 3.14.7 --no-project python tools/radroots_ffi/api.py ;;
     test-tooling) uv run --python 3.14.7 --no-project python -m unittest discover -s tests/consumers -p "test_*.py" -v; uv run --python 3.14.7 --no-project python -m unittest discover -s tests/platforms -p test_mobile_helpers.py -v; uv run --python 3.14.7 --no-project python -m unittest discover -s tests/platforms -p test_targets.py -v ;;
     package-c) package_c ;;
     package-cpp) package_cpp ;;

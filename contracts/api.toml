@@ -1,0 +1,31 @@
+schema_version = 1
+version = "0.0.0"
+implementation = "local_example"
+native_stdout = "Radroots\n"
+browser_print = "console.log(name()) after initialize()"
+c_abi_version = 65536
+
+[packages]
+python = "radroots"
+npm = "radroots"
+maven = "org.radroots:radroots"
+android = "org.radroots:radroots-android"
+swift = "Radroots"
+go = "github.com/radrootslabs/ffi/bindings/go"
+
+[imports]
+python = "import radroots"
+typescript = 'import { name, printName } from "radroots"'
+browser = 'import { initialize, name, printName } from "radroots/browser"'
+kotlin = "import org.radroots.Radroots"
+swift = "import Radroots"
+go = 'import "github.com/radrootslabs/ffi/bindings/go"'
+c = "#include <radroots/radroots.h>"
+cpp = "#include <radroots/radroots.hpp>"
+
+[behavior]
+browser_initialization = "shared_inflight_idempotent_success_explicit_retry"
+c_string = "borrowed_utf8_explicit_length_library_lifetime_no_free"
+c_status = "preserve_unknown_nonzero_u32"
+c_panic = "contain_unwinding_panic_abort_on_panicking_payload_drop"
+cpp = "noexcept_no_allocation"
