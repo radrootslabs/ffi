@@ -1,0 +1,54 @@
+schema_version = 1
+languages = ["c", "cpp", "go", "kotlin", "python", "swift", "typescript"]
+inputs = [
+  "Cargo.toml", "Cargo.lock", "rust-toolchain.toml",
+  "package.json", "package-lock.json", "pyproject.toml", "uv.lock",
+  "contracts/bootstrap.toml", "contracts/api.toml", "contracts/generation.toml",
+  "crates/example/Cargo.toml", "crates/ffi/Cargo.toml",
+  "crates/c/Cargo.toml", "crates/node/Cargo.toml", "crates/wasm/Cargo.toml",
+  "crates/example/src/lib.rs", "crates/ffi/src/lib.rs",
+  "crates/ffi/src/bin/uniffi-bindgen.rs", "crates/c/build.rs", "crates/node/build.rs",
+  "crates/ffi/uniffi.toml", "crates/ffi/go-bindgen.json",
+  "crates/c/src/lib.rs", "crates/c/cbindgen.toml",
+  "crates/node/src/lib.rs", "crates/wasm/src/lib.rs",
+  "bindings/typescript/package.json", "bindings/typescript/tsconfig.json",
+  "bindings/typescript/src/index.ts", "bindings/typescript/src/browser.ts",
+  "tools/radroots_ffi/make.sh", "tools/radroots_ffi/native.sh",
+  "tools/radroots_ffi/checks.sh", "tools/radroots_ffi/swift.sh",
+  "tools/radroots_ffi/packages.sh", "tools/radroots_ffi/support.sh",
+  "tools/radroots_ffi/generation.py",
+]
+outputs = [
+  "bindings/c/include/radroots/radroots.h",
+  "bindings/go/internal/native/native.h",
+  "bindings/go/internal/native/radroots_ffi.go",
+  "bindings/kotlin/lib/src/main/kotlin/org/radroots/internal/radroots_ffi.kt",
+  "bindings/python/src/radroots/radroots_ffi.py",
+  "bindings/swift/Sources/RadrootsBindings/RadrootsBindings.swift",
+  "bindings/swift/Sources/RadrootsBindings/RadrootsNative.h",
+  "bindings/swift/Sources/RadrootsBindings/RadrootsNative.modulemap",
+  "bindings/typescript/native/native.cjs",
+  "bindings/typescript/native/native.d.cts",
+  "bindings/typescript/wasm/radroots_wasm.js",
+  "bindings/typescript/wasm/radroots_wasm.d.ts",
+  "bindings/typescript/wasm/radroots_wasm_bg.wasm.d.ts",
+]
+
+[rust]
+uniffi = "0.31.0"
+napi = "3.13.0"
+napi-derive = "3.6.9"
+napi-build = "2.5.0"
+wasm-bindgen = "0.2.127"
+
+[node]
+typescript = "5.9.3"
+"@napi-rs/cli" = "3.10.5"
+
+[external]
+cbindgen = "0.29.4"
+wasm-pack = "0.15.0"
+go_configuration = "crates/ffi/go-bindgen.json"
+uniffi_configuration = "crates/ffi/uniffi.toml"
+c_configuration = "crates/c/cbindgen.toml"
+cpp_facade = "bindings/cpp/include/radroots/radroots.hpp"

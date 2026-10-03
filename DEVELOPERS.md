@@ -84,6 +84,10 @@ Swift or Java compilers. Preserve upstream generator comments and required
 compiler directives. Handwritten FFI source has no comments or docstrings;
 keep explanations in Markdown documentation.
 
+`contracts/generation.toml` inventories generator inputs, tracked outputs, and
+locked tool versions. `make check-generation` validates that inventory before
+the full freshness check. C++ is a handwritten facade over the generated C ABI.
+
 ## Testing and validation
 
 `make check-bootstrap` validates the initial example contract against Cargo and

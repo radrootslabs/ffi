@@ -395,6 +395,7 @@ generate() {
     npm run build --prefix bindings/typescript
 }
 check_generated() (
+    uv run --python 3.14.7 --no-project python tools/radroots_ffi/generation.py
     check_generated_c
     verify_go_generator
     build_rust
@@ -594,6 +595,7 @@ source "$ROOT/tools/radroots_ffi/support.sh"
 case "$1" in
     check-bootstrap) uv run --python 3.14.7 --no-project python tools/radroots_ffi/bootstrap.py ;;
     check-api) uv run --python 3.14.7 --no-project python tools/radroots_ffi/api.py ;;
+    check-generation) uv run --python 3.14.7 --no-project python tools/radroots_ffi/generation.py ;;
     test-tooling) uv run --python 3.14.7 --no-project python -m unittest discover -s tests/consumers -p "test_*.py" -v; uv run --python 3.14.7 --no-project python -m unittest discover -s tests/platforms -p test_mobile_helpers.py -v; uv run --python 3.14.7 --no-project python -m unittest discover -s tests/platforms -p test_targets.py -v ;;
     package-c) package_c ;;
     package-cpp) package_cpp ;;
