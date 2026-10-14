@@ -1,0 +1,122 @@
+{
+  "schema": 1,
+  "platform": "darwin_arm64",
+  "rust_target": "aarch64-apple-darwin",
+  "profile": "release",
+  "core_rev": "example-sha256:4cf58c042f7a59d3f43c394852b5cf6c40c79b33bab653b95a04edfa0b3c1cef",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "generator": {
+    "repository": "https://github.com/NordSecurity/uniffi-bindgen-go",
+    "version": "0.7.1+v0.31.0",
+    "revision": "0b7fb4ceef12021bd7f790cc516fa9133e001813",
+    "uniffi": "0.31.0",
+    "binary_sha256": "c66db023b53a6bec6190f648974386496f95602968c38241db85bfd8b5fced31"
+  },
+  "archive_sha256": "d44dedeef1c8e33446edd5126f50ad391fa98978ac61527212fc9492f00f3304",
+  "inputs": [
+    {
+      "path": "tools/radroots_ffi/make.sh",
+      "sha256": "343e4287f03f8e39722bdf07d2235531b653c75c1710f74859462e6d626b29ab"
+    },
+    {
+      "path": "Cargo.toml",
+      "sha256": "a1adad06d723d9d4f1f6494501624aa848739b730714f65fde7034389598a528"
+    },
+    {
+      "path": "Cargo.lock",
+      "sha256": "4cfcd5158d55e4e3fbbd4176363329055d0fa7927ad158333189f90374a9e98f"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "sha256": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228"
+    },
+    {
+      "path": "crates/ffi/Cargo.toml",
+      "sha256": "a90c9f8908a762c843b2d7f4a5d22c21d37e443bd31d286a8aa5c4990bb70680"
+    },
+    {
+      "path": "crates/ffi/src/lib.rs",
+      "sha256": "b1aef2921b23a9cfa0ad2528de5cf2fd06061cb77db43d42447681b2221ef17b"
+    },
+    {
+      "path": "crates/ffi/uniffi.toml",
+      "sha256": "fec08ed3af19ebe4797400d526cb9298ad550057cb2bfe13d4469f30650c83a6"
+    },
+    {
+      "path": "crates/ffi/go-bindgen.json",
+      "sha256": "e698f1ca5852b827df28af73d3b15717ce7cfd797606069d2b8a234bc3cf54a1"
+    },
+    {
+      "path": "bindings/go/native-platforms.json",
+      "sha256": "2f5e79c6b73fbd6154da5b4ef72cd510607a3a50ee841b6e008315aae8d44f14"
+    },
+    {
+      "path": "bindings/go/go.mod",
+      "sha256": "1bf102d1c81b25eb5c2f66bd44b0eef1718de3552631c175b48eac01c65a8fbb"
+    },
+    {
+      "path": "bindings/go/radroots.go",
+      "sha256": "834e1a08826fd67af8cfa18111812fc66583f8f583d9a2e3882f98b6f1d4b5d3"
+    },
+    {
+      "path": "bindings/go/internal/native/link.go",
+      "sha256": "27ae338a94815726a71e4f4505e6437be768f946fddd5551893306b433bdec07"
+    },
+    {
+      "path": "bindings/go/internal/native/radroots_ffi.go",
+      "sha256": "1093314ba6fcdedc96ebe4f424db7991e490daa85f6b6700075f3b3a210be644"
+    },
+    {
+      "path": "bindings/go/internal/native/native.h",
+      "sha256": "f6301deb32daf4b858611a08f76f6e835385c8a09036619cf9dcb13bd64b30a9"
+    },
+    {
+      "path": "tools/radroots_ffi/checks.sh",
+      "sha256": "2c618d955f725b0ab7f4a6e833aa962e7597bab1cb8ebf9441dd1fcdb6a47164"
+    },
+    {
+      "path": "tools/radroots_ffi/native.sh",
+      "sha256": "5069a23c3daa065a123c5d558757202e1b758145fd26bd381689db1fd87d4886"
+    },
+    {
+      "path": "tools/radroots_ffi/packages.sh",
+      "sha256": "672506c1440b6af1955cbdc59a2ffe597befbac8b5ff74ef31a630b5fe5310d3"
+    },
+    {
+      "path": "tools/radroots_ffi/swift.sh",
+      "sha256": "b146593bcec8c914a9874051915f83c260f33bb53a57cf1620d24953853dede0"
+    },
+    {
+      "path": "tools/radroots_ffi/support.sh",
+      "sha256": "9d2f5bc1c4d4ecc69427ded2682b3a16b8393dba5b20bcf78d03891aa633b075"
+    },
+    {
+      "path": "tests/platforms/targets.json",
+      "sha256": "5a6b8bf545dc724d7d400a402878aa78533a6466f96dfd20958536c4982dffaf"
+    },
+    {
+      "path": "tests/consumers/package_tools.py",
+      "sha256": "7c3c8500717ee1cfd0c3e051f38e51774f804418bef226f3015320b15fc82ca4"
+    },
+    {
+      "path": "crates/example/Cargo.toml",
+      "sha256": "9b243f35cf3ea734267684f9c7a58f538c3aea91cad5c324beca5ae52c1fa323"
+    },
+    {
+      "path": "crates/example/src/lib.rs",
+      "sha256": "3ff84c7f4b979d382577c12e2212f520831dd320fd8a5ec97cbba8680fbeb16a"
+    },
+    {
+      "path": "crates/ffi/build.rs",
+      "sha256": "1c358c6499ed57176670c4dbb5be86c655f5f8d1f3059b4dd9abe2797edd4e0b"
+    },
+    {
+      "path": "crates/ffi/linux.ld",
+      "sha256": "45dd8a300a7f506a2bbe0ba4ab5cb36ceab50b59368f554274498aa05d68703a"
+    },
+    {
+      "path": "tools/radroots_ffi/rust.sh",
+      "sha256": "5d44d53489fb6ac000d7c354e4fa03e9eb9725e3507ca39623758403fdf0989f"
+    }
+  ]
+}
