@@ -1,8 +1,5 @@
 # Radroots TypeScript FFI library
 
-Version 0.0.0 is unpublished. From the repository root, use `make test-node and make test-wasm`
-for local verification. Registry installation examples describe intended distributions.
-
 TypeScript FFI library for Radroots.
 
 ```bash

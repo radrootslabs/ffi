@@ -1,8 +1,5 @@
 # Radroots C++ FFI library
 
-Version 0.0.0 is unpublished. From the repository root, use `make test-cpp`
-for local verification. Registry installation examples describe intended distributions.
-
 C++ FFI library for Radroots.
 
 Build locally with `make build-cpp`; use
