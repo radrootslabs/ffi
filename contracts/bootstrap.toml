@@ -11,6 +11,6 @@ canonical_core_integration = "deferred"
 name = "Radroots"
 native_stdout = "Radroots\n"
 browser_print = "console.log(name()) after initialize()"
-rust_toolchain = "1.97.1"
+rust_toolchain = "1.99.0"
 c_abi_version = 65536
 languages = ["c", "cpp", "go", "kotlin", "python", "swift", "typescript"]

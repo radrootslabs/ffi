@@ -23,7 +23,7 @@ Run commands from a standalone checkout. `make help` lists the available tasks.
 All Make targets delegate to `tools/radroots_ffi/make.sh`.
 Activate the pinned toolchains before setup.
 
-Install Rust 1.97.1 through rustup and have jq available for every language.
+Install Rust 1.99.0 through rustup and have jq available for every language.
 The language-specific prerequisites and commands are listed below.
 
 To work on all bindings on macOS with Xcode and every language toolchain installed:
@@ -144,7 +144,7 @@ isolated packages. Build output remains ignored.
 
 ### Rust adapters
 
-Requires Rust 1.97.1, rustup and jq. The repository uses edition 2024 and resolver 3.
+Requires Rust 1.99.0, rustup and jq. The repository uses edition 2024 and resolver 3.
 
 ```sh
 make setup-rust
@@ -357,7 +357,7 @@ requires an actual published Radroots asset and its checksum; neither exists yet
 
 ### C11 and C++17
 
-Requires Rust 1.97.1, a C11 compiler, CMake 3.24+, pkg-config and uv/Python 3.14.7.
+Requires Rust 1.99.0, a C11 compiler, CMake 3.24+, pkg-config and uv/Python 3.14.7.
 C++ additionally requires a C++17 compiler. `make setup-c` installs cbindgen
 0.29.4 with Cargo's locked dependency graph. `make setup-cpp` checks both compilers.
 

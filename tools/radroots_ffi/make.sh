@@ -20,7 +20,7 @@ library() {
 }
 doctor_rust() {
     require cargo; require rustc; require jq
-    [[ $(rustc --version) == 'rustc 1.97.1 '* ]] || die 'Rust 1.97.1 is required'
+    [[ $(rustc --version) == 'rustc 1.99.0 '* ]] || die 'Rust 1.99.0 is required'
 }
 doctor_python() {
     doctor_rust

@@ -21,7 +21,7 @@ Connecting that FFI library at an immutable public revision is a separate step.
 | `contracts/` | Initial repository identity and example API scope |
 
 Start with [DEVELOPERS.md](DEVELOPERS.md) for toolchains and language-specific
-commands. With Rust 1.97.1 and jq installed:
+commands. With Rust 1.99.0 and jq installed:
 
 ```sh
 make setup-rust

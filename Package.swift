@@ -2,7 +2,7 @@
 import PackageDescription
 
 let releaseTag = "v0.0.0"
-let releaseChecksum = "7c53506222541666e84040f2ce6e4370e77f8d2be0a8a9152802deb5fff0b9ed"
+let releaseChecksum = "13f824dc2cf61977e877339bdb59e596b84399e73db85ec004bbbcd549f79898"
 
 let package = Package(
   name: "Radroots",

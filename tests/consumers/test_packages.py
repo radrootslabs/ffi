@@ -19,7 +19,7 @@ class GoDistributionTests(unittest.TestCase):
             '[workspace.dependencies.radroots]\nrev = "' + "a" * 40 + '"\n'
         )
         (self.sdk / "rust-toolchain.toml").write_text(
-            '[toolchain]\nchannel = "1.97.1"\n'
+            '[toolchain]\nchannel = "1.99.0"\n'
         )
         (self.module / "go.mod").write_text(
             "module github.com/radrootslabs/ffi/bindings/go\n\ngo 1.27.1\n"
@@ -69,7 +69,7 @@ class GoDistributionTests(unittest.TestCase):
                             for name in self.policy["source_files"]
                         ],
                         "generator": self.generator | {"binary_sha256": "c" * 64},
-                        "rustc": "rustc 1.97.1 (fixture)",
+                        "rustc": "rustc 1.99.0 (fixture)",
                     }
                 )
             )
