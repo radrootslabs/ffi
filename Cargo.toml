@@ -13,7 +13,7 @@ homepage = "https://radroots.org"
 publish = false
 
 [workspace.dependencies]
-radroots = { package = "radroots_ffi_example", path = "crates/example", version = "=0.0.0" }
+radroots = { package = "radroots", path = "crates/example", version = "=0.0.0" }
 uniffi = "=0.31.0"
 napi = { version = "=3.13.0", default-features = false, features = ["napi8"] }
 napi-derive = "=3.6.9"

@@ -1,6 +1,6 @@
-# Radroots Kotlin FFI library
+# Radroots Kotlin SDK
 
-Kotlin FFI library for Radroots.
+Kotlin SDK for Radroots.
 
 ```kotlin
 implementation("org.radroots:radroots:0.0.0")

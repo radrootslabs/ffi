@@ -52,15 +52,13 @@ require macOS and Xcode. Browser and mobile tests have separate targets.
 - `bindings/cpp` provides a header-only C++17 facade over that C ABI.
 - `bindings/` contains language facades, generated source and package manifests.
 
-The bootstrap uses the unpublished `radroots_ffi_example` package through the
-`radroots` dependency alias. Its only operations are `NAME`, `name()` and
-`print_name()`. It is independent of the canonical `radroots` crate in
+The `radroots` Rust SDK lives in `crates/example`; all adapters use this package. Its only operations are `NAME`, `name()` and
+`print_name()`. It is independent of the larger library implementation in
 [radrootslabs/lib](https://github.com/radrootslabs/lib). Future canonical-core
 integration must use a full public Git revision; it is not part of this bootstrap.
 Local package receipts bind the example source with a SHA-256 identity. Rust
 uses edition 2024 and resolver 3. The workspace version in `Cargo.toml` owns the
-FFI library version; language package versions must agree. Core and FFI repositories
-retain separate histories. Preserve the [package identities](#package-identities);
+FFI library version; language package versions must agree. The Rust SDK and FFI adapters share this repository. Preserve the [package identities](#package-identities);
 Go uses `github.com/radrootslabs/ffi/bindings/go`; local consumers use
 the package test proxy before publication.
 
@@ -68,7 +66,7 @@ the package test proxy before publication.
 
 | Language | Installation or import |
 | --- | --- |
-| Rust | Unpublished local example/adapters; no Rust package in this release |
+| Rust | `cargo add radroots`; implementation in `crates/example` |
 | TypeScript | `npm install radroots` |
 | Python | `uv add radroots` |
 | Go | `go get github.com/radrootslabs/ffi/bindings/go` |
@@ -77,9 +75,9 @@ the package test proxy before publication.
 | C | `#include <radroots/radroots.h>` |
 | C++ | `#include <radroots/radroots.hpp>` |
 
-These identities describe the intended distributions; version 0.0.0 has not
-been published here. The canonical Rust SDK is maintained separately in
-[radrootslabs/lib](https://github.com/radrootslabs/lib).
+These identities describe the release distributions; availability is checked
+separately for each destination. The Rust identity API and foreign adapters share
+this repository; integration with `radrootslabs/lib` remains deferred.
 Release notes accompany published versions.
 
 ## Generated bindings

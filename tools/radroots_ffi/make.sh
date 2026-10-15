@@ -448,7 +448,7 @@ build() {
 test_rust() {
     doctor_rust
     cargo build --locked -p radroots_ffi --example print-name
-    cargo test --locked -p radroots_ffi_example -p radroots_ffi -p radroots_c -p radroots_wasm
+    cargo test --locked -p radroots -p radroots_ffi -p radroots_c -p radroots_wasm
 }
 test_python() {
     build_python
@@ -547,7 +547,7 @@ check() {
     if [[ $(uname -s) == Darwin ]]; then check_swift; fi
 }
 help() {
-    printf '%s\n' 'make check-bootstrap: validate the unpublished example contract'
+    printf '%s\n' 'make check-bootstrap: validate the Rust SDK and adapter contract'
     printf '%s\n' 'make setup-checks: install pinned handwritten-source format/type tools' \
       'make check-<language> | format-<language>: rust, python, typescript, kotlin, go, swift, c, cpp' \
       'make package-python | package-typescript | package-kotlin | package-android | package-go | package-swift | package-c | package-cpp' \

@@ -13,7 +13,7 @@ def validate(root):
         "repository": package["repository"],
         "homepage": package["homepage"],
         "version": package["version"],
-        "publication": "unpublished",
+        "publication": "registry_release",
         "core_package": dependency["package"],
         "core_path": dependency["path"],
         "adapter_dependency_alias": "radroots",
@@ -31,7 +31,7 @@ def validate(root):
     core = tomllib.loads((root / dependency["path"] / "Cargo.toml").read_text())
     if (
         core["package"]["name"] != dependency["package"]
-        or core["package"]["publish"] is not False
+        or core["package"]["publish"] is not True
         or package["publish"] is not False
         or dependency["version"] != "=" + package["version"]
         or package["rust-version"] != contract["rust_toolchain"]
@@ -41,4 +41,4 @@ def validate(root):
 
 if __name__ == "__main__":
     validate(Path(__file__).resolve().parents[2])
-    print("Bootstrap contract matches the unpublished example and adapters")
+    print("Bootstrap contract matches the Rust SDK and unpublished adapters")

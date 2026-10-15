@@ -148,11 +148,11 @@ class ExampleCoreIdentityTests(unittest.TestCase):
         (self.sdk / "crates/example/src").mkdir(parents=True)
         (self.sdk / "Cargo.toml").write_text(
             "[workspace.dependencies.radroots]\n"
-            'package = "radroots_ffi_example"\n'
+            'package = "radroots"\n'
             'path = "crates/example"\nversion = "=0.0.0"\n'
         )
         (self.sdk / "crates/example/Cargo.toml").write_text(
-            '[package]\nname = "radroots_ffi_example"\n'
+            '[package]\nname = "radroots"\n'
         )
         self.source = self.sdk / "crates/example/src/lib.rs"
         self.source.write_text('pub const NAME: &str = "Radroots";\n')

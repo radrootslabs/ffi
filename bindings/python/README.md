@@ -1,6 +1,6 @@
-# Radroots Python FFI library
+# Radroots Python SDK
 
-Python FFI library for Radroots.
+Python SDK for Radroots.
 
 ```bash
 uv add radroots

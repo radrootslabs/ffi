@@ -2,15 +2,15 @@
 
 Multi-language bindings and local package tooling for [Radroots](https://radroots.org).
 
-Version 0.0.0 is an unpublished bootstrap. The current example returns `Radroots`
+Version 0.0.0 exposes a small identity API. The implementation returns `Radroots`
 and prints the name. It exercises generation, native loading, language facades,
 and installed-package consumers for C, C++, Go, Kotlin/Java, Python, Swift, and
 TypeScript (Node.js and browser WebAssembly).
 
 The small Rust implementation lives in `crates/example`, named
-`radroots_ffi_example` and imported by adapters as `radroots`. It does not replace
-the canonical Rust SDK in [radrootslabs/lib](https://github.com/radrootslabs/lib).
-Connecting that FFI library at an immutable public revision is a separate step.
+`radroots`, and is packaged as the Rust SDK. The adapters use the same local
+implementation. Integration with [radrootslabs/lib](https://github.com/radrootslabs/lib)
+remains a separate step.
 
 | Directory | Purpose |
 | --- | --- |
@@ -32,8 +32,8 @@ make check-rust
 `make help` lists the complete command surface.
 Swift's root manifest uses the versioned release XCFramework;
 `make build-swift` stages a separate local development package. Package names and remote-install examples in the
-language READMEs describe intended distributions, not currently published
-packages. Local package tests work without publishing the FFI library.
+language READMEs describe the package identities. Availability is verified per
+destination during release; local package tests do not require publication.
 
 The API prints to native stdout, or browser `console.log` after explicit WASM
 initialization. See each language README for usage.

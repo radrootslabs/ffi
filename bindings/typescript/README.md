@@ -1,6 +1,6 @@
-# Radroots TypeScript FFI library
+# Radroots TypeScript SDK
 
-TypeScript FFI library for Radroots.
+TypeScript SDK for Radroots.
 
 ```bash
 npm install radroots
@@ -39,9 +39,9 @@ the asset elsewhere. This entry point uses browser WebAssembly, not WASI.
 | `dist/` | Ignored compiled JavaScript and declarations |
 
 Generated source is maintained through the pinned generators, never edited by
-hand. Platform npm packages are generated into the FFI library's ignored
+hand. Platform npm packages are generated into the SDK's ignored
 `build/typescript/npm/<platform-arch-abi>/` staging directory. Their package
 names remain `@radroots/native-<platform-arch-abi>`; only active targets are
-generated. Local archives are written to `build/dist/npm/` at the FFI library root.
+generated. Local archives are written to `build/dist/npm/` at the SDK root.
 
 See the repository's `DEVELOPERS.md` for prerequisites and Make commands.

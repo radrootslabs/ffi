@@ -63,7 +63,7 @@ def core_identity(sdk=SDK):
             raise ValueError("Core revision must be a full immutable Git SHA")
         return revision
     if dependency != {
-        "package": "radroots_ffi_example",
+        "package": "radroots",
         "path": "crates/example",
         "version": "=0.0.0",
     }:

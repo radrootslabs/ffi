@@ -1,6 +1,6 @@
-# Radroots C FFI library
+# Radroots C SDK
 
-C FFI library for Radroots.
+C SDK for Radroots.
 Build and install locally with `make install-c`; use
 `find_package(Radroots CONFIG REQUIRED)` and `Radroots::c_shared` or
 `Radroots::c_static`. `Radroots::c` selects shared linkage.

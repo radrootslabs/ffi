@@ -1,7 +1,9 @@
 # Radroots FFI library capsule
 
 This repository is a standalone public FFI-library capsule. Its approved first
-release is version `0.0.0`, backed by the unpublished `crates/example` package.
+release is version `0.0.0`, backed by the `radroots` Rust SDK in `crates/example`.
+The SDK is publishable to crates.io; adapter crates remain unpublished. Existing
+public 0.0.0 artifacts and tags are immutable and retain their original provenance.
 Read `contracts/bootstrap.toml`, `Cargo.toml`, language manifests, and relevant
 tests before changing source. Canonical lib/SDK integration is deferred.
 

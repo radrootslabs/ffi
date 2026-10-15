@@ -1,6 +1,6 @@
 [package]
-name = "radroots_ffi_example"
-description = "Minimal Radroots identity API for binding and packaging examples"
+name = "radroots"
+description = "Rust SDK for Radroots."
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -8,7 +8,11 @@ authors.workspace = true
 license.workspace = true
 repository.workspace = true
 homepage.workspace = true
-publish = false
+publish = true
+readme = "README.md"
+keywords = ["radroots"]
+include = ["src/**", "tests/**", "README.md", "LICENSE-MIT", "LICENSE-APACHE", "Cargo.toml"]
 
 [lib]
+name = "radroots"
 path = "src/lib.rs"

@@ -1,6 +1,6 @@
-# Radroots C++ FFI library
+# Radroots C++ SDK
 
-C++ FFI library for Radroots.
+C++ SDK for Radroots.
 
 Build locally with `make build-cpp`; use
 `find_package(RadrootsCpp CONFIG REQUIRED)` and `Radroots::cpp` or

@@ -1,6 +1,6 @@
-# Radroots Go FFI library
+# Radroots Go SDK
 
-Go FFI library for Radroots.
+Go SDK for Radroots.
 
 The module path is `github.com/radrootslabs/ffi/bindings/go`.
 Version tags use `bindings/go/v<version>`; distribution snapshots include the

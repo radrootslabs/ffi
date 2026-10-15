@@ -1,6 +1,6 @@
-# Radroots Swift FFI library
+# Radroots Swift SDK
 
-Swift FFI library for Radroots.
+Swift SDK for Radroots.
 
 ```swift
 .package(

@@ -38,8 +38,8 @@ class BootstrapContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Bootstrap contract differs"):
             bootstrap.validate(self.root)
 
-    def test_rejects_publishable_example(self):
+    def test_rejects_unpublishable_core(self):
         path = self.root / "crates/example/Cargo.toml"
-        path.write_text(path.read_text().replace("publish = false", "publish = true"))
+        path.write_text(path.read_text().replace("publish = true", "publish = false"))
         with self.assertRaisesRegex(ValueError, "publication policy differs"):
             bootstrap.validate(self.root)
